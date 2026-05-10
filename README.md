@@ -14,6 +14,13 @@ optimizer score landscape, and the auto-generated 970-byte flight policy
 C source — all backed by `docs/data.json`, generated offline by the Python
 pipeline. No backend runs at request time; the page is fully static.
 
+## Concept site
+
+**https://ayhamshaloudi90-bit.github.io/CubeSat-site/**
+
+Standalone concept site by teammate Ayham Shaloudi — high-level mission
+overview, lifecycle phases, and the interactive Solar Surfer mini-game.
+
 ## Reproduce key results in ~60 seconds
 
 ```bash
