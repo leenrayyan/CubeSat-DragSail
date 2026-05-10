@@ -1,7 +1,7 @@
 """
-Export simulation results to web/data.json for the ORION-1 dashboard.
+Export simulation results to docs/data.json for the ORION-1 dashboard.
 
-The dashboard (web/index.html) is fully static and consumes this single
+The dashboard (docs/index.html) is fully static and consumes this single
 JSON file at page load. Re-run this script any time the simulation
 parameters change.
 
@@ -34,7 +34,7 @@ WINDOW_DAYS = 360
 N_SAMPLES = 30
 ESA_LIMIT_YR = 5.0
 
-OUT_DIR = "web"
+OUT_DIR = "docs"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 

@@ -2,8 +2,8 @@
 One-shot reproduction script for judges.
 
 Runs the full pipeline in order and reports timing for each stage.
-After this completes, web/data.json and results/*.png are populated and
-the dashboard at web/index.html will show the latest numbers.
+After this completes, docs/data.json and results/*.png are populated and
+the dashboard at docs/index.html will show the latest numbers.
 
     python reproduce.py            # default: skip distillation if cached
     python reproduce.py --full     # force re-distill the flight policy (~7 min)
@@ -49,9 +49,9 @@ def main():
     print("\nAll stages complete.")
     print("  results/         — 4 PNG plots")
     print("  flight/policy.c  — distilled embedded C")
-    print("  web/data.json    — dashboard data")
+    print("  docs/data.json    — dashboard data")
     print("\nServe the dashboard:")
-    print("  cd web && python -m http.server 8000")
+    print("  cd docs && python -m http.server 8000")
     print("  open http://localhost:8000/")
 
 

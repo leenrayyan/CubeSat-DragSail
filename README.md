@@ -5,6 +5,15 @@ via a thin-film drag sail. The deployment moment is chosen by an onboard
 **AI Inference IC** running a policy distilled from a ground-trained
 **Gaussian Process** forecaster on 21 years of real NOAA F10.7 solar data.
 
+## Live dashboard
+
+**https://leenrayyan.github.io/CubeSat-DragSail/**
+
+Interactive 3D orbit visualization, hardware architecture, KPI table,
+optimizer score landscape, and the auto-generated 970-byte flight policy
+C source — all backed by `docs/data.json`, generated offline by the Python
+pipeline. No backend runs at request time; the page is fully static.
+
 ## Reproduce key results in ~60 seconds
 
 ```bash
@@ -17,14 +26,14 @@ This runs the full pipeline end-to-end:
 2. Fits the Gaussian Process forecaster
 3. Runs robust optimization across 30 forecast samples
 4. Distills the deployment policy to portable C (`flight/policy.c`, ~970 B)
-5. Exports `web/data.json` for the dashboard
+5. Exports `docs/data.json` for the dashboard
 6. Saves the 4 figures referenced in the concept document to `results/`
 7. Prints the headline KPI table
 
 Total runtime: ~30–60 s. After that, the interactive dashboard:
 
 ```bash
-cd web && python -m http.server 8000
+cd docs && python -m http.server 8000
 # open http://localhost:8000/index.html
 ```
 
@@ -37,12 +46,12 @@ cd web && python -m http.server 8000
 | `ai_optimizer.py` | Robust optimization across forecast samples. 4 strategies: naive, point, robust (E[score]), risk-averse (p95). |
 | `flight_policy.py` | Distills the optimizer into a depth-5 decision tree, exports portable C via m2cgen. Output in `flight/`. |
 | `main_sim.py` | One-shot CLI: KPI table + 4 PNG plots into `results/`. |
-| `export_web_data.py` | Writes `web/data.json` for the static dashboard. |
+| `export_web_data.py` | Writes `docs/data.json` for the static dashboard. |
 | `reproduce.py` | Runs everything in order; the single command judges should use. |
 | `sim.ipynb` | Interactive notebook for parameter exploration. |
-| `web/index.html` | Static dashboard with 3D orbit visualization (Three.js). |
-| `AnaMALY_AIDragSail_ConceptDocument.docx` | Full concept document. |
-| `AnaMALY_AIDragSail_ConceptDocument_2pg.docx` | 2-page submission version. |
+| `docs/index.html` | Static dashboard with 3D orbit visualization (Three.js). Auto-served by GitHub Pages. |
+| `docs/data.json` | Pre-generated simulation outputs consumed by the dashboard. |
+| `flight/policy.c` | Auto-generated 970-byte deployment policy for the AI Inference IC. |
 
 ## Key assumptions (verifiable in code)
 
