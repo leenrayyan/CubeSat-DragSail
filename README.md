@@ -18,8 +18,9 @@ pipeline. No backend runs at request time; the page is fully static.
 
 **https://ayhamshaloudi90-bit.github.io/CubeSat-site/**
 
-Standalone concept site by teammate Ayham Shaloudi — high-level mission
-overview, lifecycle phases, and the interactive Solar Surfer mini-game.
+Standalone concept site — high-level mission overview, lifecycle phases,
+and the interactive Solar Surfer mini-game. Predates the AI simulation
+work in this repository.
 
 ## Reproduce key results in ~60 seconds
 
