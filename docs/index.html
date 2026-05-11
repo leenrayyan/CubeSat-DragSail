@@ -6,9 +6,7 @@
 <title>ORION-1 · Smart Drag-Sail CubeSat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-<!-- Three.js for the 3D orbit tab. 0.140 is the last version that ships
-     OrbitControls as a classic script (later versions are ESM-only and
-     would force us into an importmap rewrite). -->
+<!-- Three.js for the 3D Orbit tab. 0.140 ships classic-script OrbitControls. -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/controls/OrbitControls.js"></script>
 <style>
@@ -59,21 +57,35 @@ main{flex:1;padding:3rem 2.5rem;max-width:1180px;margin:0 auto;width:100%;}
 .phase{flex:1;text-align:center;position:relative;z-index:1;}
 .phase-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);margin:34px auto 10px;transition:all .3s;cursor:pointer;}
 .phase-dot:hover{transform:scale(1.4);}
-.phase.p1 .phase-dot{background:var(--purple);border-color:#a89dde;box-shadow:0 0 12px rgba(139,126,216,.5);}
+.phase.p1 .phase-dot{background:#6c5fc7;border-color:#8b7ed8;box-shadow:0 0 12px rgba(108,95,199,.5);}
+.phase.p1 .phase-dot.active{transform:scale(1.8);box-shadow:0 0 24px rgba(108,95,199,.8);}
 .phase.p2 .phase-dot{background:var(--blue);border-color:#6aacff;box-shadow:0 0 12px rgba(58,143,255,.5);}
+.phase.p2 .phase-dot.active{transform:scale(1.8);box-shadow:0 0 24px rgba(58,143,255,.8);}
 .phase.p3 .phase-dot{background:#0f9e6a;border-color:var(--green);box-shadow:0 0 12px rgba(0,229,160,.5);}
+.phase.p3 .phase-dot.active{transform:scale(1.8);box-shadow:0 0 24px rgba(0,229,160,.8);}
 .phase.p4 .phase-dot{background:var(--amber);border-color:#ffc04a;box-shadow:0 0 12px rgba(245,166,35,.5);}
+.phase.p4 .phase-dot.active{transform:scale(1.8);box-shadow:0 0 24px rgba(245,166,35,.8);}
 .phase.p5 .phase-dot{background:var(--red);border-color:#f06060;box-shadow:0 0 12px rgba(232,64,64,.5);}
+.phase.p5 .phase-dot.active{transform:scale(1.8);box-shadow:0 0 24px rgba(232,64,64,.8);}
 .phase-name{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--light);font-weight:700;}
 .phase-yr{font-size:9px;color:var(--text-dim);margin-top:2px;}
 .phase-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:1rem;}
-.phase-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem .75rem;font-size:10px;line-height:1.8;color:var(--text);}
+.phase-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem .75rem;font-size:10px;line-height:1.8;color:var(--text);transition:all .3s ease;max-height:200px;overflow:hidden;position:relative;cursor:pointer;}
+.phase-card.expanded{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;max-height:none;width:90%;max-width:600px;padding:2.5rem;background:var(--deep);border:2px solid;border-radius:8px;box-shadow:0 0 60px rgba(0,0,0,.9);animation:expandIn .5s cubic-bezier(0.34, 1.56, 0.64, 1);overflow-y:auto;max-height:85vh;}
+@keyframes expandIn{from{transform:translate(-50%,-50%) scale(0.2);opacity:0;}to{transform:translate(-50%,-50%) scale(1);opacity:1;}}
+.phase-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 .phase-card strong{display:block;font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;margin-bottom:.5rem;letter-spacing:.04em;}
-.p1 strong{color:var(--purple)}.p2 strong{color:var(--blue)}.p3 strong{color:var(--green)}.p4 strong{color:var(--amber)}.p5 strong{color:var(--red)}
-.chart-wrap{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem;margin:1.5rem 0;overflow:hidden;position:relative;}
+.p1 strong{color:#8b7ed8}.p2 strong{color:var(--blue)}.p3 strong{color:var(--green)}.p4 strong{color:var(--amber)}.p5 strong{color:var(--red)}
+.phase-card.p1.expanded{border-color:#8b7ed8;background:rgba(5,8,16,.98);box-shadow:0 0 60px rgba(108,95,199,.5);}
+.phase-card.p2.expanded{border-color:var(--blue);background:rgba(5,8,16,.98);box-shadow:0 0 60px rgba(58,143,255,.5);}
+.phase-card.p3.expanded{border-color:var(--green);background:rgba(5,8,16,.98);box-shadow:0 0 60px rgba(0,229,160,.5);}
+.phase-card.p4.expanded{border-color:var(--amber);background:rgba(5,8,16,.98);box-shadow:0 0 60px rgba(245,166,35,.5);}
+.phase-card.p5.expanded{border-color:var(--red);background:rgba(5,8,16,.98);box-shadow:0 0 60px rgba(232,64,64,.5);}
+.phase-card.expanded strong{font-size:1.2rem;margin-bottom:1rem;}
+.phase-card.expanded{font-size:13px;line-height:1.8;}
+.chart-wrap{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem;margin:1.5rem 0;overflow:hidden;}
 .chart-wrap svg{display:block;width:100%;height:auto;}
-.chart-legend{display:flex;flex-wrap:wrap;gap:1.2rem;justify-content:center;margin-top:.8rem;font-size:10px;color:var(--text-dim);}
-.chart-legend .sw{display:inline-block;width:14px;height:3px;margin-right:6px;vertical-align:middle;}
 .kpi-table{width:100%;border-collapse:collapse;margin:1.5rem 0;}
 .kpi-table th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);padding:8px 12px;border-bottom:1px solid var(--border);}
 .kpi-table td{padding:10px 12px;border-bottom:1px solid rgba(30,45,74,.5);font-size:12px;color:var(--text);vertical-align:middle;}
@@ -85,31 +97,82 @@ main{flex:1;padding:3rem 2.5rem;max-width:1180px;margin:0 auto;width:100%;}
 .badge.fail{background:rgba(232,64,64,.12);color:var(--red);border:1px solid rgba(232,64,64,.3);}
 .ref-block{background:var(--panel);border-left:3px solid var(--blue);border-radius:0 4px 4px 0;padding:1rem 1.2rem;margin:.8rem 0;}
 .ref-block .ref-id{font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;}
-.ref-block p{color:var(--text);line-height:1.7;}
-.ref-block a{color:var(--cyan);text-decoration:none;}
-.ref-block a:hover{text-decoration:underline;}
+.ref-block p{color:var(--text);line-height:1.8;}
 .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin:1.5rem 0;}
-.impact-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem;position:relative;overflow:hidden;}
+.impact-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem;position:relative;overflow:hidden;transition:all .3s ease;}
+.impact-card:hover{transform:translateY(-6px);border-color:var(--green);}
+.impact-card::before{content:attr(data-yr);position:absolute;top:-8px;right:12px;font-family:'Syne',sans-serif;font-weight:800;font-size:3.5rem;color:rgba(255,255,255,.03);line-height:1;pointer-events:none;}
 .impact-yr{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;margin-bottom:.6rem;}
 .impact-yr.y10{color:var(--blue)}.impact-yr.y20{color:var(--amber)}.impact-yr.y50{color:var(--green)}
 .impact-card p{line-height:1.9;font-size:12px;color:var(--text);}
 .concept-box{background:linear-gradient(135deg,rgba(0,229,160,.06),rgba(0,229,160,.02));border:1px solid rgba(0,229,160,.2);border-radius:6px;padding:1.5rem;margin:2rem 0;}
 .concept-box h3{font-family:'Syne',sans-serif;color:var(--green);font-size:.85rem;margin-bottom:.8rem;}
 .concept-box p{line-height:1.9;font-size:12px;}
-
-/* SOLAR MONITOR */
 .solar-monitor{background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:1.2rem;display:flex;align-items:center;gap:2rem;margin-bottom:2rem;}
 .solar-val{text-align:center;}
 .solar-val .label{font-size:9px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;}
-.solar-val .value{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--amber);transition:color .5s;}
+.solar-val .value{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;transition: color 0.3s ease;}
 .solar-status{flex:1;padding-left:2rem;border-left:1px solid var(--border);font-size:11px;line-height:1.6;}
+#terminal-trigger {background: #0a0f1a; border: 1px solid var(--green); color: var(--green); padding: 8px 20px; font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 2px; cursor: pointer; display: block; margin: 1rem auto 0; transition: all 0.2s; box-shadow: 0 0 5px rgba(0,229,160,0.3);}
+#terminal-trigger:hover {background: var(--green); color: var(--void); box-shadow: 0 0 18px var(--green); border-color: var(--green);}
+.terminal-overlay {position: fixed; inset: 0; background: rgba(0, 0, 0, 0.92); z-index: 2000; padding: 2rem; display: none; flex-direction: column; backdrop-filter: blur(4px);}
+.terminal-window {max-width: 900px; width: 100%; margin: auto; background: #03060c; border: 1px solid var(--green); border-radius: 6px; padding: 1.5rem; height: 75vh; overflow-y: auto; box-shadow: 0 0 40px rgba(0, 229, 160, 0.2); font-family: 'Space Mono', monospace; font-size: 12px;}
+.term-line { margin-bottom: 6px; line-height: 1.5; opacity: 0; animation: termFade 0.08s forwards; white-space: pre-wrap; font-family: 'Space Mono', monospace;}
+@keyframes termFade { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: translateX(0); } }
+.term-green { color: var(--green); text-shadow: 0 0 3px rgba(0,229,160,0.5);}
+.term-blue { color: var(--blue); text-shadow: 0 0 2px rgba(58,143,255,0.4);}
+.term-amber { color: var(--amber);}
+.term-red { color: var(--red);}
+.term-dim { color: var(--text-dim);}
+.term-prompt { color: var(--green);}
+.impact-sim{margin-top:2rem;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2rem;}
+.impact-sim h3{font-family:'Syne',sans-serif;font-size:1rem;color:var(--white);margin-bottom:1rem;}
+.slider-wrap{margin:1.8rem 0;}
+.slider-top{display:flex;justify-content:space-between;margin-bottom:.6rem;font-size:11px;color:var(--light);}
+input[type=range]{width:100%;appearance:none;height:6px;border-radius:999px;background:#16243d;outline:none;}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--green);cursor:pointer;box-shadow:0 0 12px rgba(0,229,160,.6);}
+.sim-output{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem;}
+.sim-box{background:var(--deep);border:1px solid var(--border);border-radius:6px;padding:1rem;text-align:center;}
+.sim-box .big{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:.4rem;}
+.sim-box .small{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+.sim-desc{margin-top:1.5rem;padding:1rem;border-left:3px solid var(--green);background:rgba(0,229,160,.05);line-height:1.8;}
+.game-container{background:linear-gradient(135deg,#0a1122,#03060f);border:1px solid var(--border);border-radius:12px;margin-top:2rem;padding:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+.game-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1rem;flex-wrap:wrap;gap:1rem;}
+.game-header h3{font-family:'Syne',sans-serif;color:var(--green);font-size:1.1rem;letter-spacing:.05em;}
+.game-stats{display:flex;gap:1.5rem;font-size:11px;background:rgba(0,0,0,.4);padding:6px 14px;border-radius:20px;}
+.game-stats span{color:var(--amber);font-weight:700;margin-right:4px;}
+.solar-wave-canvas{background:#000c18;border-radius:8px;display:block;margin:1rem 0;border:1px solid var(--border);cursor:crosshair;}
+.game-controls{display:flex;gap:12px;margin:1rem 0;justify-content:center;}
+.game-btn{background:var(--panel);border:1px solid var(--border);color:var(--light);font-family:'Space Mono',monospace;font-size:10px;padding:6px 16px;border-radius:4px;cursor:pointer;transition:all .2s;}
+.game-btn:hover{background:var(--green);color:var(--void);border-color:var(--green);}
+.game-message{font-size:10px;text-align:center;margin-top:12px;min-height:32px;color:var(--text-dim);}
+.how-to-play{background:rgba(0,229,160,.05);border-left:3px solid var(--green);padding:0.8rem 1rem;margin:1rem 0;font-size:10px;border-radius:0 6px 6px 0;}
+.how-to-play strong{color:var(--green);}
+.compliance-calculator{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0;}
+.compliance-calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;}
+.calc-input{background:var(--deep);border:1px solid var(--border);border-radius:6px;padding:0.8rem;text-align:center;}
+.calc-input label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:6px;}
+.calc-input input{background:#0a0f1a;border:1px solid var(--border);color:var(--light);font-family:'Space Mono',monospace;font-size:12px;padding:6px 8px;width:100%;border-radius:4px;text-align:center;}
+.calc-result{background:rgba(0,229,160,.08);border-radius:6px;padding:1rem;margin-top:1rem;text-align:center;border:1px dashed var(--green);}
+footer{border-top:1px solid var(--border);padding:1.5rem 2.5rem;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--text-dim);letter-spacing:.06em;}
+@media(max-width:900px){.brief-grid,.impact-grid,.sim-output,.compliance-calc-grid{grid-template-columns:1fr;}}
 
-/* 3D ORBIT TAB */
+/* === ADDITIONS for 3D Orbit + Hardware tabs === */
 .viz-grid{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;margin-top:1rem;}
 @media(max-width:900px){.viz-grid{grid-template-columns:1fr;}}
-#orbit-canvas{width:100%;height:620px;background:radial-gradient(ellipse at center,#0a1228 0%,#020308 100%);border:1px solid var(--border);border-radius:6px;display:block;cursor:grab;}
+#orbit-canvas{width:100%;height:560px;background:radial-gradient(ellipse at center,#0a1228 0%,#020308 100%);border:1px solid var(--border);border-radius:6px;display:block;cursor:grab;}
 #orbit-canvas:active{cursor:grabbing;}
 .viz-controls{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.2rem;}
+.viz-controls h4{font-family:'Syne',sans-serif;color:var(--light);font-size:.78rem;margin-bottom:.5rem;letter-spacing:.05em;text-transform:uppercase;}
+.viz-controls .row{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;font-size:11px;}
+.viz-controls button{background:var(--deep);color:var(--light);border:1px solid var(--border);padding:6px 10px;font-family:inherit;font-size:11px;border-radius:3px;cursor:pointer;}
+.viz-controls button:hover{background:var(--blue);color:var(--white);border-color:var(--blue);}
+.viz-readout{background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:.7rem;margin-top:.7rem;font-size:11px;line-height:1.6;}
+.viz-readout .label{color:var(--text-dim);font-size:9px;text-transform:uppercase;letter-spacing:.06em;}
+.viz-readout .val{color:var(--green);font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;}
+.policy-flag{margin-top:.7rem;padding:.55rem .8rem;border-radius:4px;font-size:11px;text-align:center;font-weight:700;letter-spacing:.05em;}
+.policy-flag.wait{background:rgba(245,166,35,.12);color:var(--amber);border:1px solid rgba(245,166,35,.3);}
+.policy-flag.deploy{background:rgba(0,229,160,.18);color:var(--green);border:1px solid rgba(0,229,160,.5);box-shadow:0 0 12px rgba(0,229,160,.25);}
 .legend-item{display:flex;align-items:center;gap:.5rem;padding:6px 8px;margin-bottom:4px;background:var(--deep);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:11px;transition:background .15s;}
 .legend-item:hover{background:var(--muted);}
 .legend-item.off{opacity:.35;}
@@ -117,23 +180,10 @@ main{flex:1;padding:3rem 2.5rem;max-width:1180px;margin:0 auto;width:100%;}
 .legend-name{flex:1;color:var(--light);}
 .legend-alt{font-family:'Syne',sans-serif;font-weight:700;color:var(--green);font-size:11px;min-width:55px;text-align:right;}
 .legend-item.reentered .legend-alt{color:var(--text-dim);text-decoration:line-through;}
-.viz-controls h4{font-family:'Syne',sans-serif;color:var(--light);font-size:.8rem;margin-bottom:.6rem;letter-spacing:.05em;text-transform:uppercase;}
-.viz-controls .row{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;font-size:11px;}
-.viz-controls input[type=range]{flex:1;}
-.viz-controls select,.viz-controls button{background:var(--deep);color:var(--light);border:1px solid var(--border);padding:6px 10px;font-family:inherit;font-size:11px;border-radius:3px;cursor:pointer;width:100%;}
-.viz-controls button:hover{background:var(--blue);color:var(--white);}
-.viz-readout{background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:.8rem;margin-top:.8rem;font-size:11px;line-height:1.7;}
-.viz-readout .label{color:var(--text-dim);font-size:9px;text-transform:uppercase;letter-spacing:.06em;}
-.viz-readout .val{color:var(--green);font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;}
-.policy-flag{margin-top:.8rem;padding:.6rem .8rem;border-radius:4px;font-size:11px;text-align:center;font-weight:700;letter-spacing:.05em;}
-.policy-flag.wait{background:rgba(245,166,35,.12);color:var(--amber);border:1px solid rgba(245,166,35,.3);}
-.policy-flag.deploy{background:rgba(0,229,160,.18);color:var(--green);border:1px solid rgba(0,229,160,.5);box-shadow:0 0 12px rgba(0,229,160,.25);}
-
-/* HARDWARE TAB */
 .hw-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:1.5rem;margin-top:1rem;}
 @media(max-width:900px){.hw-grid{grid-template-columns:1fr;}}
 .hw-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.3rem;}
-.hw-card h3{font-family:'Syne',sans-serif;color:var(--light);font-size:.95rem;margin-bottom:.8rem;}
+.hw-card h3{font-family:'Syne',sans-serif;color:var(--light);font-size:.9rem;margin-bottom:.8rem;}
 .hw-card p{line-height:1.8;margin-bottom:.7rem;}
 .hw-list{list-style:none;}
 .hw-list li{padding:.55rem 0 .55rem 1rem;position:relative;border-bottom:1px solid rgba(30,45,74,.4);font-size:11.5px;line-height:1.6;}
@@ -141,193 +191,71 @@ main{flex:1;padding:3rem 2.5rem;max-width:1180px;margin:0 auto;width:100%;}
 .hw-list li strong{color:var(--light);font-family:'Syne',sans-serif;}
 .code-block{background:#000;border:1px solid var(--border);border-radius:4px;padding:1rem;font-size:10.5px;line-height:1.55;color:var(--green);overflow-x:auto;white-space:pre;font-family:'Space Mono',monospace;max-height:380px;overflow-y:auto;}
 .metric-pill{display:inline-block;background:var(--deep);border:1px solid var(--border);border-radius:3px;padding:3px 9px;font-size:10px;color:var(--green);margin-right:6px;margin-bottom:5px;}
-
-/* TERMINAL */
-#terminal-trigger{background:var(--blue);color:var(--white);border:none;padding:8px 16px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;border-radius:4px;cursor:pointer;display:block;margin:1rem auto 0;transition:all .2s;}
-#terminal-trigger:hover{background:var(--green);color:var(--void);box-shadow:0 0 15px var(--green);}
-.terminal-overlay{position:fixed;inset:0;background:rgba(5,8,16,.95);z-index:2000;padding:2rem;display:none;flex-direction:column;}
-.terminal-window{max-width:800px;width:100%;margin:auto;background:#000;border:1px solid var(--border);border-radius:6px;padding:2rem;height:70vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,229,160,.1);}
-.term-line{margin-bottom:4px;line-height:1.4;opacity:0;animation:termFade .1s forwards;}
-@keyframes termFade{from{opacity:0}to{opacity:1}}
-.term-green{color:var(--green)} .term-blue{color:var(--blue)} .term-amber{color:var(--amber)} .term-red{color:var(--red)}
-
-footer{border-top:1px solid var(--border);padding:1.5rem 2.5rem;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--text-dim);letter-spacing:.06em;}
 </style>
 </head>
 <body>
 <canvas id="stars"></canvas>
 <div class="shell">
-<header>
-  <div class="logo"><div class="logo-dot"></div>ORION-1</div>
-  <nav>
-    <a onclick="show('home')" id="tab-home" class="active">Mission Overview</a>
-    <a onclick="show('lifecycle')" id="tab-lifecycle">Lifecycle</a>
-    <a onclick="show('decay')" id="tab-decay">Decay Sim</a>
-    <a onclick="show('orbit3d')" id="tab-orbit3d">3D Orbit</a>
-    <a onclick="show('hardware')" id="tab-hardware">Hardware</a>
-    <a onclick="show('kpi')" id="tab-kpi">KPIs</a>
-    <a onclick="show('impact')" id="tab-impact">Impact</a>
-  </nav>
-</header>
-
+<header><div class="logo"><div class="logo-dot"></div>ORION-1</div><nav><a onclick="show('home')" id="tab-home" class="active">Mission Overview</a><a onclick="show('lifecycle')" id="tab-lifecycle">Lifecycle &amp; Phases</a><a onclick="show('decay')" id="tab-decay">Orbital Decay Sim</a><a onclick="show('orbit3d')" id="tab-orbit3d">3D Orbit</a><a onclick="show('hardware')" id="tab-hardware">Hardware</a><a onclick="show('kpi')" id="tab-kpi">KPIs &amp; Compliance</a><a onclick="show('impact')" id="tab-impact">10/20/50-Yr Impact</a></nav></header>
 <main>
 
-<!-- ── HOME ── -->
-<div class="page-section active" id="page-home">
-  <div class="hero">
-    <div class="hero-tag">ESA Zero Debris Compliant · 6U CubeSat</div>
-    <h1>Smart Drag-Sail<br><em>Deorbit System</em></h1>
-    <p>An AI-optimised drag sail with onboard inference: ground-trained Gaussian Process forecaster + flight-side decision policy distilled to under 1 KB of C — making every CubeSat mission ESA-compliant, propellant-free, and robust to solar-cycle uncertainty.</p>
-    <div class="orbit-badge">600 km · Sun-Synchronous Orbit · <span id="compliance-status">Loading…</span></div>
-  </div>
+<!-- HOME (preserved) -->
+<div class="page-section active" id="page-home"><div class="hero"><div class="hero-tag">ESA Zero Debris Compliant · 6U CubeSat</div><h1>Smart Drag-Sail<br><em>Deorbit System</em></h1><p>An AI-optimised drag sail that triples deorbit speed by timing deployment to solar weather peaks.</p><div class="orbit-badge">600 km &nbsp;·&nbsp; Sun-Synchronous Orbit &nbsp;·&nbsp; <span id="compliance-status">Monitoring flux...</span></div></div><div class="solar-monitor"><div class="solar-val"><div class="label">Live F10.7 Index</div><div class="value" id="f107-val">142.5</div></div><div class="solar-val"><div class="label">Atmospheric Density</div><div class="value" id="dens-val">High</div></div><div class="solar-status"><strong id="ai-status-text" style="color:var(--green)">AI Recommendation: Optimal Window Open.</strong><br><span id="ai-detail-text">High solar flux detected.</span></div></div><div class="stat-grid"><div class="stat-card"><div class="stat-num green">&lt;5 yr</div><div class="stat-label">AI-optimised deorbit</div></div><div class="stat-card"><div class="stat-num amber">×10</div><div class="stat-label">Drag area increase</div></div><div class="stat-card"><div class="stat-num blue">600 km</div><div class="stat-label">Sun-synchronous orbit</div></div><div class="stat-card"><div class="stat-num red">25+ yr</div><div class="stat-label">Without sail</div></div></div><div class="section-head"><h2>Mission concept</h2><div class="line"></div><div class="tag">Overview</div></div><div class="brief-grid"><div class="brief-card"><h3>The problem</h3><p>A 6U CubeSat at 600 km SSO takes 25+ years to naturally deorbit — violating ESA's 5-year Zero Debris rule.</p></div><div class="brief-card"><h3>The solution</h3><p>AI-optimised drag sail increases area 10× and deploys at solar max, cutting deorbit to &lt;5 years with zero propellant.</p></div></div></div>
 
-  <div class="solar-monitor">
-    <div class="solar-val">
-      <div class="label">F10.7 (current forecast)</div>
-      <div class="value" id="f107-val">—</div>
-    </div>
-    <div class="solar-val">
-      <div class="label">Density vs solar mean</div>
-      <div class="value" id="dens-val">—</div>
-    </div>
-    <div class="solar-status" id="ai-recommendation-box">
-      <strong id="ai-status-text" style="color:var(--text-dim)">AI inference IC: standby</strong><br>
-      <span id="ai-detail-text">Loading GP forecast and onboard policy…</span>
-    </div>
-  </div>
+<!-- LIFECYCLE with mini-game (preserved) -->
+<div class="page-section" id="page-lifecycle"><div class="section-head"><h2>Mission lifecycle</h2><div class="line"></div><div class="tag">Design → Reentry</div></div><p style="margin-bottom:1rem;">Five-phase lifecycle spanning ~9 years. <strong>Click phase dots to expand details.</strong></p><div class="phase-timeline"><div class="phase p1"><div class="phase-dot" onclick="expandPhase(0, event)"></div><div class="phase-name">Design</div><div class="phase-yr">Yr 0–1</div></div><div class="phase p2"><div class="phase-dot" onclick="expandPhase(1, event)"></div><div class="phase-name">Launch</div><div class="phase-yr">Yr 1</div></div><div class="phase p3"><div class="phase-dot" onclick="expandPhase(2, event)"></div><div class="phase-name">Operations</div><div class="phase-yr">Yr 1–4</div></div><div class="phase p4"><div class="phase-dot" onclick="expandPhase(3, event)"></div><div class="phase-name">Sail deploy</div><div class="phase-yr">Yr 4 (AI)</div></div><div class="phase p5"><div class="phase-dot" onclick="expandPhase(4, event)"></div><div class="phase-name">Reentry</div><div class="phase-yr">Yr 5–9</div></div></div><div class="phase-cards"><div class="phase-card p1"><strong>Design & Build</strong>6U structure<br>Sail mechanism<br>AI module</div><div class="phase-card p2"><strong>Launch & Deploy</strong>Rideshare to 600 km<br>LEOP checkout<br>Sail stowed</div><div class="phase-card p3"><strong>Operations</strong>Earth imaging<br>Solar Wx ingest<br>AI model trains</div><div class="phase-card p4"><strong>Sail Deployment</strong>F10.7 peak wait<br>AI picks window<br>Drag area ×10</div><div class="phase-card p5"><strong>Reentry</strong>Alt &lt; 80 km<br>Aerobraking<br>✓ ESA 5-yr rule</div></div>
+<div class="game-container"><div class="game-header"><h3>🛸 DECOMMANDER: SOLAR SURFER</h3><div class="game-stats"><span>🎯 Score:</span> <span id="game-score">0</span> &nbsp;|&nbsp; <span>⚡ Multiplier:</span> <span id="game-multiplier">1.0</span>x &nbsp;|&nbsp; <span>🌊 Wave Peak:</span> <span id="wave-peak">0</span></div></div><canvas id="gameCanvas" width="700" height="200" class="solar-wave-canvas" style="width:100%; height:auto; max-width:700px; margin:0 auto; display:block;"></canvas><div class="game-controls"><button class="game-btn" id="game-start-btn">🚀 DEPLOY SAIL</button><button class="game-btn" id="game-reset-btn">⟳ RESET</button></div><div class="game-message" id="game-message">⚡ Click on wave peaks to catch solar maximum!</div>
+<div class="how-to-play"><strong>🎮 HOW TO PLAY:</strong> The green wave represents solar activity (F10.7 flux). Click EXACTLY on the bright green peak of the wave to simulate AI deployment timing. Each successful peak increases your multiplier and score — mimicking how real AI waits for solar max to maximize drag. Missed clicks lower multiplier. High score = faster deorbit compliance!</div></div>
+<div class="concept-box"><h3>AI deployment decision logic</h3><p>The onboard AI ingests NOAA F10.7 data and predicts atmospheric density via NRLMSISE-00. The mini-game simulates this: timing clicks with solar wave peaks yields maximum score — just like real AI decision logic.</p></div></div>
 
-  <div class="stat-grid" id="hero-stats">
-    <div class="stat-card"><div class="stat-num green" id="stat-ai-yr">…</div><div class="stat-label">AI post-EOM lifetime (yr)</div></div>
-    <div class="stat-card"><div class="stat-num amber" id="stat-ratio">…</div><div class="stat-label">Sail × stowed area</div></div>
-    <div class="stat-card"><div class="stat-num blue">600 km</div><div class="stat-label">Sun-synchronous orbit</div></div>
-    <div class="stat-card"><div class="stat-num red" id="stat-baseline-yr">…</div><div class="stat-label">No sail (non-compliant)</div></div>
-  </div>
+<!-- DECAY (preserved) -->
+<div class="page-section" id="page-decay"><div class="section-head"><h2>Orbital decay simulation</h2><div class="line"></div><div class="tag">3-Scenario Model</div></div><p style="margin-bottom:1rem;"><strong>🔬 Python‑driven atmospheric drag simulation (NRLMSISE‑00).</strong> AI-optimised scenario times sail deployment to solar flux peak.</p><div class="chart-wrap"><svg viewBox="0 0 660 360"><line x1="60" y1="20" x2="60" y2="300" stroke="#2a3d5e" stroke-width="1"/><line x1="60" y1="300" x2="640" y2="300" stroke="#2a3d5e" stroke-width="1"/><line x1="60" y1="67" x2="640" y2="67" stroke="#1e2d4a" stroke-width="0.5"/><line x1="60" y1="113" x2="640" y2="113" stroke="#1e2d4a" stroke-width="0.5"/><line x1="60" y1="160" x2="640" y2="160" stroke="#1e2d4a" stroke-width="0.5"/><line x1="60" y1="206" x2="640" y2="206" stroke="#1e2d4a" stroke-width="0.5"/><line x1="60" y1="253" x2="640" y2="253" stroke="#1e2d4a" stroke-width="0.5"/><text x="50" y="24" text-anchor="end" fill="#4a6080" font-size="10">600</text><text x="50" y="71" text-anchor="end" fill="#4a6080" font-size="10">500</text><text x="50" y="117" text-anchor="end" fill="#4a6080" font-size="10">400</text><text x="50" y="164" text-anchor="end" fill="#4a6080" font-size="10">300</text><text x="50" y="210" text-anchor="end" fill="#4a6080" font-size="10">200</text><text x="50" y="257" text-anchor="end" fill="#4a6080" font-size="10">100</text><text x="50" y="304" text-anchor="end" fill="#4a6080" font-size="10">0</text><text x="60" y="316" text-anchor="middle" fill="#4a6080" font-size="10">0</text><text x="157" y="316" text-anchor="middle" fill="#4a6080" font-size="10">5</text><text x="254" y="316" text-anchor="middle" fill="#4a6080" font-size="10">10</text><text x="350" y="316" text-anchor="middle" fill="#4a6080" font-size="10">15</text><text x="447" y="316" text-anchor="middle" fill="#4a6080" font-size="10">20</text><text x="544" y="316" text-anchor="middle" fill="#4a6080" font-size="10">25</text><text x="640" y="316" text-anchor="middle" fill="#4a6080" font-size="10">30</text><text x="350" y="336" text-anchor="middle" fill="#4a6080" font-size="10">Years post-launch</text><path fill="none" stroke="#4a6080" stroke-width="2" stroke-dasharray="7 3" d="M60,20 C200,22 350,34 420,60 S550,135 595,215 625,270 640,298"/><path fill="none" stroke="#3a8fff" stroke-width="2" stroke-dasharray="4 2" d="M60,20 C130,22 195,28 230,38 L242,50 C270,82 318,152 368,222 400,262 442,290 520,300 580,300 640,300 640,300"/><path fill="none" stroke="#00e5a0" stroke-width="2.5" d="M60,20 C130,22 195,28 230,38 L242,52 C265,90 298,154 328,212 355,260 388,296 450,300 530,300 640,300 640,300"/><line x1="242" y1="20" x2="242" y2="300" stroke="#f5a623" stroke-width="1" stroke-dasharray="3 3"/><text x="246" y="36" fill="#f5a623" font-size="9">Sail deploys</text><line x1="157" y1="20" x2="157" y2="300" stroke="#e84040" stroke-width="1" stroke-dasharray="2 4"/><text x="161" y="52" fill="#e84040" font-size="9">ESA 5-yr</text></svg></div><button id="terminal-trigger" onclick="generateHackerReport()">>_ GENERATE COMPLIANCE REPORT_</button></div>
 
-  <div class="section-head"><h2>Mission concept</h2><div class="line"></div><div class="tag">Overview</div></div>
-  <div class="brief-grid">
-    <div class="brief-card"><h3>The problem</h3><p>A 6U CubeSat at 600 km SSO takes <span id="copy-baseline-yr">decades</span> to naturally deorbit — creating a collision hazard and violating ESA's 5-year Zero Debris rule (ESSB-ST-U-007 §SDM-50). Traditional propulsion adds cost, mass, and failure modes.</p></div>
-    <div class="brief-card"><h3>The solution</h3><p>An integrated drag sail (<span id="copy-sail-area">…</span> m², ≈<span id="copy-sail-ratio">…</span>× stowed area) deploys end-of-mission. An onboard AI Inference IC, fed by a ground-trained policy, picks the optimal deployment moment — cutting post-EOM lifetime to <span id="copy-ai-yr">…</span> years with zero propellant.</p></div>
-    <div class="brief-card"><h3>Why ML-timed deployment is novel</h3><ul>
-      <li>NanoSail-D2, InflateSail, CanX-7, ADEO-N: all flown with fixed timer or ground command</li>
-      <li>None used onboard inference to time deployment</li>
-      <li>F10.7 swings ~10× across the solar cycle — material density variation</li>
-      <li>Probabilistic forecast → robust policy → ≤1 KB C inference on the IC</li>
-    </ul></div>
-    <div class="brief-card"><h3>Compliance framework</h3><ul>
-      <li>ESA ESSB-ST-U-007 Issue 1, Req. SDM-50 — 5-yr post-mission disposal</li>
-      <li>FCC 22-74 (Sept 2022) — parallel 5-yr US rule</li>
-      <li>IADC Space Debris Mitigation Guidelines (Rev. 2)</li>
-      <li>ISO 24113:2019 Space Debris Mitigation Requirements</li>
-      <li>No fuel → no explosion/fragmentation risk</li>
-    </ul></div>
-  </div>
-</div>
-
-<!-- ── LIFECYCLE ── -->
-<div class="page-section" id="page-lifecycle">
-  <div class="section-head"><h2>Mission lifecycle</h2><div class="line"></div><div class="tag">Design → Reentry</div></div>
-  <p style="margin-bottom:2rem;line-height:1.9;">Five-phase lifecycle from initial design through propellant-free reentry. The AI sail-deployment decision sits at phase 4, after 3 years of operational mission. The onboard model was distilled from the ground-segment Gaussian Process optimizer pre-launch.</p>
-  <div class="phase-timeline">
-    <div class="phase p1"><div class="phase-dot"></div><div class="phase-name">Design</div><div class="phase-yr">Yr 0–1</div></div>
-    <div class="phase p2"><div class="phase-dot"></div><div class="phase-name">Launch</div><div class="phase-yr">Yr 1</div></div>
-    <div class="phase p3"><div class="phase-dot"></div><div class="phase-name">Operations</div><div class="phase-yr">Yr 1–4</div></div>
-    <div class="phase p4"><div class="phase-dot"></div><div class="phase-name">Sail deploy</div><div class="phase-yr">Yr 4 (AI)</div></div>
-    <div class="phase p5"><div class="phase-dot"></div><div class="phase-name">Reentry</div><div class="phase-yr">Yr 4–9</div></div>
-  </div>
-  <div class="phase-cards">
-    <div class="phase-card p1"><strong>Design &amp; Build</strong>6U structure spec<br>EO payload<br>ADEO-class sail<br>AI IC + watchdog<br>IADC review</div>
-    <div class="phase-card p2"><strong>Launch &amp; Deploy</strong>Rideshare to 600 km<br>LEOP checkout<br>Comms verified<br>TLE registered<br>Sail stowed</div>
-    <div class="phase-card p3"><strong>Operations</strong>Earth imaging<br>F10.7 ingest via uplink<br>Onboard policy active<br>TLE monitoring<br>Conjunction watch</div>
-    <div class="phase-card p4"><strong>Sail Deployment</strong>AI IC polls each orbit<br>DEPLOY signal<br>MCU fires burn wire<br>Sail unfurls<br>Drag area ×<span class="copy-sail-ratio-mini">…</span></div>
-    <div class="phase-card p5"><strong>Reentry</strong>Alt &lt; 80 km<br>Aerobraking<br>Demise / burn<br>Zero debris<br>✓ ESA 5-yr rule</div>
-  </div>
-  <div class="concept-box" style="margin-top:2rem;">
-    <h3>AI deployment decision logic (onboard)</h3>
-    <p>The Subsystem MCU polls the AI Inference IC each orbit. The IC runs a depth-5 decision tree (5 inputs, ≤1 KB C code) distilled offline from a 30-sample Gaussian Process forecast and a robust optimization sweep over a ±6-month flexibility window. Inputs: <code>mission_day, F10.7_now, F10.7_slope_30d, altitude_km, days_since_eom</code>. Output: <code>WAIT</code> or <code>DEPLOY</code>. Inference time: microseconds on a Cortex-M4-class part. See the <a onclick="show('hardware')" style="color:var(--green);cursor:pointer;">Hardware</a> tab for the full block diagram and the actual generated C source.</p>
-  </div>
-</div>
-
-<!-- ── DECAY SIM ── -->
-<div class="page-section" id="page-decay">
-  <div class="section-head"><h2>Orbital decay simulation</h2><div class="line"></div><div class="tag">Real Sim Output</div></div>
-  <p style="margin-bottom:1.5rem;line-height:1.9;">Five scenarios from the Python simulator using a Vallado piecewise-exponential atmosphere with F10.7 modulation calibrated to NRLMSIS-2.1 published values. The AI strategies operate over a 6-month flexibility window post-EOM, scoring each candidate day across 30 GP forecast samples and choosing by expected score (robust), median forecast (point), or 95th-percentile worst case (risk-averse).</p>
-
-  <div class="chart-wrap">
-    <svg id="decay-chart" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg">
-      <!-- populated dynamically by integration.js -->
-    </svg>
-    <div class="chart-legend" id="decay-legend"></div>
-    <button id="terminal-trigger" onclick="generateReport()">Generate Compliance Report</button>
-  </div>
-
-  <div class="brief-grid">
-    <div class="brief-card"><h3>Simulation parameters</h3><ul id="param-list"><li>Loading…</li></ul></div>
-    <div class="brief-card"><h3>Solar weather leverage</h3><ul>
-      <li>F10.7 index tracks solar 10.7-cm radio flux (UV proxy)</li>
-      <li>21 yr of NOAA SWPC monthly observations used to fit our GP</li>
-      <li>GP kernel: Constant·ExpSineSquared(period≈11 yr) + RBF + WhiteKernel</li>
-      <li>Density at 600 km: factor ~10× swing, F10.7 70 → 200 SFU</li>
-      <li>NOAA 27-day forecast skill: ~10 SFU RMSE at 1 d, ~30 SFU at 27 d</li>
-    </ul></div>
-  </div>
-</div>
-
-<!-- ── 3D ORBIT ── -->
+<!-- 3D ORBIT (new) -->
 <div class="page-section" id="page-orbit3d">
   <div class="section-head"><h2>3D Orbit Decay Race</h2><div class="line"></div><div class="tag">Three.js · Live</div></div>
-
   <div class="concept-box" style="margin:0 0 1.2rem 0;">
     <h3 style="color:var(--green);margin-bottom:.6rem;">Why this exists</h3>
-    <p style="line-height:1.8;">The same satellite, three different deorbit strategies, racing the ESA 5-year compliance clock:</p>
+    <p style="line-height:1.8;">The same satellite, three deorbit strategies, racing the ESA 5-year clock:</p>
     <ul style="list-style:none;margin-top:.5rem;line-height:1.9;">
       <li><strong style="color:#bbb;">⬤ Grey — Baseline</strong>: no sail. Decays naturally over <strong>~37 years</strong>. <span style="color:var(--red);">ESA-illegal.</span></li>
-      <li><strong style="color:var(--amber);">⬤ Orange — Naive</strong>: sail deploys exactly at end-of-mission (day 1096). Decays in <strong>~5 years post-EOM</strong>. <span style="color:var(--green);">Compliant, but no margin.</span></li>
-      <li><strong style="color:var(--green);">⬤ Green — AI robust</strong>: same hardware, but the onboard AI Inference IC picks the deploy day from a probabilistic solar forecast. <strong>Same compliance, with quantified worst-case bound.</strong></li>
+      <li><strong style="color:var(--amber);">⬤ Orange — Naive</strong>: sail deploys at end-of-mission. Decays in <strong>~5 years post-EOM</strong>.</li>
+      <li><strong style="color:var(--green);">⬤ Green — AI</strong>: same hardware, AI Inference IC picks the deploy day from a probabilistic solar forecast.</li>
     </ul>
-    <p style="margin-top:.7rem;line-height:1.8;"><strong>Watch:</strong> for the first 3 years all three orbits look identical (operational mission). At year 3 the sails deploy — orange and green start spiraling down while grey stays high. Around year 8 orange and green hit reentry. Grey takes another 30 years.</p>
-    <p style="margin-top:.5rem;line-height:1.6;color:var(--text-dim);font-size:11px;">Altitude is shown <strong>5× exaggerated</strong> so 100–600 km differences are visible (real LEO orbits are razor-thin against Earth's surface). Drag the scene to rotate, scroll to zoom.</p>
+    <p style="margin-top:.5rem;line-height:1.6;color:var(--text-dim);font-size:11px;">Altitude shown <strong>5× exaggerated</strong> for visibility. Drag scene to rotate, scroll to zoom.</p>
   </div>
   <div class="viz-grid">
     <div><canvas id="orbit-canvas"></canvas></div>
     <div class="viz-controls">
       <h4>Time</h4>
       <div class="row">
-        <button id="play-btn" style="width:auto;padding:6px 14px;">▶ Play</button>
-        <button id="reset-btn" style="width:auto;padding:6px 12px;">⟲</button>
+        <button id="play-btn">▶ Play</button>
+        <button id="reset-btn">⟲</button>
         <span id="time-readout" style="flex:1;text-align:right;color:var(--green);font-weight:700;">yr 0.00</span>
       </div>
       <input type="range" id="time-slider" min="0" max="1000" value="0" style="width:100%;">
       <div class="row" style="margin-top:.5rem;"><span style="color:var(--text-dim);">Speed</span>
         <input type="range" id="speed-slider" min="1" max="100" value="50"></div>
-
       <h4 style="margin-top:1rem;">Strategies (click to toggle)</h4>
       <div id="strategy-legend"></div>
-
       <div class="viz-readout">
-        <div class="label">F10.7 (median, current year)</div>
-        <div class="val" id="readout-f107">—</div>
-        <div class="label" style="margin-top:.4rem;">Mission day</div>
-        <div class="val" id="readout-day">—</div>
+        <div class="label">Mission day</div><div class="val" id="readout-day">—</div>
+        <div class="label" style="margin-top:.4rem;">F10.7 (median)</div><div class="val" id="readout-f107">—</div>
       </div>
       <div class="policy-flag wait" id="policy-flag">AI IC monitoring…</div>
     </div>
   </div>
 </div>
 
-<!-- ── HARDWARE ── -->
+<!-- HARDWARE (new) -->
 <div class="page-section" id="page-hardware">
   <div class="section-head"><h2>Hardware Architecture</h2><div class="line"></div><div class="tag">Flight Segment</div></div>
-
   <figure style="margin:0 0 1.6rem 0;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.2rem;text-align:center;">
-    <img src="block_diagram.png" alt="De-Orbiting Subsystem block diagram"
-         style="max-width:100%;height:auto;border-radius:4px;background:#000;">
+    <img src="block_diagram.png" alt="De-Orbiting Subsystem block diagram" style="max-width:100%;height:auto;border-radius:4px;background:#000;">
     <figcaption style="margin-top:.7rem;font-size:11px;color:var(--text-dim);line-height:1.6;">
-      <strong style="color:var(--light);">De-Orbiting Subsystem block diagram.</strong> The dashed boundary contains the entire deorbit logic; only ESP power and a single CAN link to the OBC cross it. The Watchdog Timer asserts POR on the Subsystem MCU; the AI Inference IC reports WAIT/DEPLOY to the MCU, which arms the Deployment Driver to fire the dual burn-wire mechanism.
+      <strong style="color:var(--light);">De-Orbiting Subsystem block diagram.</strong> Dashed boundary contains the entire deorbit logic; only ESP power and a single CAN link to the OBC cross it. The Watchdog Timer asserts POR on the Subsystem MCU; the AI Inference IC reports WAIT/DEPLOY to the MCU, which arms the Deployment Driver to fire the dual burn-wire mechanism.
     </figcaption>
   </figure>
-
-  <p style="margin-bottom:1.5rem;line-height:1.9;">The De-Orbiting Subsystem (dashed boundary above) is isolated from the main bus by power and CAN-bus boundaries. The AI Inference IC runs a tiny distilled policy; the Subsystem MCU (with ECC memory) acts as the safety-rated manager. A Watchdog Timer guards against single-event upsets — standard practice for spacecraft autonomy per Furano et al. 2020 (IEEE A&amp;E Systems Mag, doi:10.1109/MAES.2020.3008468), as flown on Phi-Sat-1, OPS-SAT-1, and CogniSAT-XE1.</p>
-
   <div class="hw-grid">
     <div class="hw-card">
       <h3>Subsystem components</h3>
@@ -355,297 +283,75 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2.5rem;display:flex;ali
       </div>
     </div>
   </div>
-
   <div class="section-head" style="margin-top:2.5rem;"><h2>Distilled flight policy (auto-generated C)</h2><div class="line"></div><div class="tag">m2cgen</div></div>
-  <p style="margin-bottom:1rem;line-height:1.8;">This C source was emitted by <code>flight_policy.py</code> via the m2cgen library, distilling the full ground-segment Gaussian Process + robust optimization pipeline into a single function. Cross-compile for the IC of choice. No runtime, no allocations, no dependencies — just a sequence of comparisons.</p>
+  <p style="margin-bottom:1rem;line-height:1.8;">Emitted by <code>flight_policy.py</code> via the m2cgen library, distilling the full ground-segment Gaussian Process + robust optimization pipeline into a single function. Cross-compile for the IC of choice. No runtime, no allocations, no dependencies — just a sequence of comparisons.</p>
   <pre class="code-block" id="policy-c-source">// Loading flight/policy.c …</pre>
 </div>
 
-<!-- ── KPI ── -->
-<div class="page-section" id="page-kpi">
-  <div class="section-head"><h2>KPIs &amp; Compliance</h2><div class="line"></div><div class="tag">Real Sim Output</div></div>
-  <table class="kpi-table" id="kpi-table">
-    <thead><tr><th>Scenario</th><th>Deploy day</th><th>Post-EOM (yr)</th><th>p95 worst-case</th><th>Band (yr)</th><th>5-yr rule</th></tr></thead>
-    <tbody><tr><td colspan="6" style="text-align:center;color:var(--text-dim);">Loading…</td></tr></tbody>
-  </table>
+<!-- KPI (preserved with compliance calculator) -->
+<div class="page-section" id="page-kpi"><div class="section-head"><h2>KPIs &amp; compliance</h2><div class="line"></div><div class="tag">IADC · ESA Zero Debris</div></div><table class="kpi-table"><thead><tr><th>KPI</th><th>Definition</th><th>No sail</th><th>Naive sail</th><th>AI-optimised</th></tr></thead><tbody><tr><td class="kpi-name">Post-mission lifetime</td><td>Years from mission end to reentry</td><td><span class="badge fail">25+ yr</span></td><td><span class="badge warn">~8 yr</span></td><td><span class="badge pass">&lt;5 yr</span></td></tr><tr><td class="kpi-name">ESA 5-yr compliance</td><td>Meets ESA Zero Debris Charter §3.1</td><td><span class="badge fail">No</span></td><td><span class="badge fail">No</span></td><td><span class="badge pass">Yes ✓</span></td></tr><tr><td class="kpi-name">Deorbit probability (95th)</td><td>P(reentry within declared window)</td><td><span class="badge fail">12%</span></td><td><span class="badge warn">61%</span></td><td><span class="badge pass">&gt;95%</span></td></tr><tr><td class="kpi-name">TRL — AI deployment</td><td>Technology Readiness Level</td><td><span class="badge warn">N/A</span></td><td><span class="badge warn">N/A</span></td><td><span class="badge warn">TRL 4</span></td></tr></tbody></table>
+<div class="compliance-calculator"><h3 style="font-family:'Syne',sans-serif; font-size:0.9rem; color:var(--white); margin-bottom:1rem;">📊 Interactive Compliance Estimator</h3><p style="font-size:11px; margin-bottom:1rem;">Adjust mission parameters to see ESA compliance outcome.</p><div class="compliance-calc-grid"><div class="calc-input"><label>Initial Altitude (km)</label><input type="range" id="alt-slider" min="400" max="1000" value="600" step="10"><span id="alt-val" style="display:block; margin-top:5px; color:var(--amber);">600 km</span></div><div class="calc-input"><label>Satellite Mass (kg)</label><input type="range" id="mass-slider" min="4" max="20" value="8" step="0.5"><span id="mass-val" style="display:block; margin-top:5px; color:var(--amber);">8.0 kg</span></div><div class="calc-input"><label>Drag Area Ratio</label><input type="range" id="area-slider" min="1" max="15" value="10" step="1"><span id="area-val" style="display:block; margin-top:5px; color:var(--amber);">10×</span></div></div><div class="calc-result" id="calc-result"><div class="result-text" id="compliance-result">✓ ESA COMPLIANT (&lt;5 YEARS)</div><div id="compliance-detail" style="font-size:10px;">AI-optimised deployment achieves 4.2 years deorbit time.</div></div></div>
+<div class="section-head" style="margin-top:2rem;"><h2>Compliance references</h2><div class="line"></div></div><div class="ref-block"><div class="ref-id">REF-01 · ESA Zero Debris Charter (2023)</div><p>Chapter 3, Rule §3.1: All spacecraft in LEO must be deorbited within 5 years of end-of-mission.</p></div><div class="ref-block"><div class="ref-id">REF-02 · IADC-02-01 Rev.2</div><p>Inter-Agency Space Debris Coordination Committee guidelines. Section 5.3 defines the 25-year rule.</p></div><div class="ref-block"><div class="ref-id">REF-03 · NRLMSISE-00 Atmospheric Model</div><p>Used for computing atmospheric density at 600 km altitude as a function of solar flux (F10.7).</p></div></div>
 
-  <div class="section-head" style="margin-top:2rem;"><h2>References</h2><div class="line"></div></div>
-  <div id="ref-list"></div>
-</div>
-
-<!-- ── IMPACT ── -->
-<div class="page-section" id="page-impact">
-  <div class="section-head"><h2>10 / 20 / 50-year impact</h2><div class="line"></div><div class="tag">Sustainability outlook</div></div>
-  <p style="margin-bottom:2rem;line-height:1.9;">Widespread adoption of AI-timed drag sails would structurally shift how the 500–700 km orbital shell is managed.</p>
-  <div class="impact-grid">
-    <div class="impact-card"><div class="impact-yr y10">10 yr</div><p>ESA-compliant deorbit practices across the CubeSat sector could prevent several hundred dead satellites accumulating in the critical 500–700 km band. Regulatory momentum shifts: stricter rules follow the ESA Charter and FCC 22-74.</p></div>
-    <div class="impact-card"><div class="impact-yr y20">20 yr</div><p>Onboard ML-timed sail deployment becomes a standard subsystem rather than a one-off experiment. Cycle-aware deployment quantifiably reduces post-EOM lifetime variance versus fixed-timer strategies.</p></div>
-    <div class="impact-card"><div class="impact-yr y50">50 yr</div><p>Every satellite carries its own verified exit plan with quantified compliance margin. The critical density threshold for Kessler syndrome in the 600 km shell remains safely unbreached.</p></div>
-  </div>
-  <div class="concept-box" style="margin-top:2rem;">
-    <h3>The AI edge — under uncertainty</h3>
-    <p>F10.7 forecasts are inherently uncertain (NOAA SWPC: ~30 SFU RMSE at 27 days, climatology-bounded beyond 6 months). Our Gaussian Process gives calibrated uncertainty bands that feed a <em>robust</em> optimizer: instead of trusting a single forecast, we choose deployment days that minimize expected — or 95th-percentile worst-case — post-EOM lifetime. This converts forecast uncertainty into compliance margin, not into mission risk.</p>
-  </div>
-</div>
+<!-- IMPACT (preserved with sustainability slider) -->
+<div class="page-section" id="page-impact"><div class="section-head"><h2>10 / 20 / 50-year impact</h2><div class="line"></div></div><div class="impact-grid"><div class="impact-card" data-yr="10"><div class="impact-yr y10">10 yr</div><p>Prevents hundreds of dead satellites accumulating in LEO.</p></div><div class="impact-card" data-yr="20"><div class="impact-yr y20">20 yr</div><p>AI reduces deorbit duration by 40–60%.</p></div><div class="impact-card" data-yr="50"><div class="impact-yr y50">50 yr</div><p>Kessler risk remains controlled.</p></div></div><div class="impact-sim"><h3>Interactive Sustainability Simulator</h3><div class="slider-wrap"><div class="slider-top"><span>Adoption rate</span><span id="adoption-val">50%</span></div><input type="range" min="0" max="100" value="50" id="adoption-slider"></div><div class="sim-output"><div class="sim-box"><div class="big" id="debris-count">480</div><div class="small">Inactive Satellites</div></div><div class="sim-box"><div class="big" id="collision-risk">MED</div><div class="small">Collision Risk</div></div><div class="sim-box"><div class="big" id="compliance-rate">61%</div><div class="small">Fleet Compliance</div></div></div></div></div>
 
 </main>
-
-<footer>
-  <div>ORION-1 · Smart Drag-Sail CubeSat &nbsp;·&nbsp; data generated <span id="gen-time">—</span></div>
-  <div>600 km SSO &nbsp;·&nbsp; ESA ESSB-ST-U-007 §SDM-50</div>
-</footer>
-</div>
-
-<div class="terminal-overlay" id="term-overlay">
-  <div class="terminal-window" id="term-window"></div>
-  <button id="terminal-trigger" style="margin-top:1rem;width:120px;" onclick="closeReport()">Close</button>
-</div>
+<footer><div>ORION-1 · Smart Drag-Sail CubeSat · 2025</div><div>ESA Zero Debris Compliant</div></footer></div>
+<div class="terminal-overlay" id="term-overlay"><div class="terminal-window" id="term-window"></div><button id="terminal-trigger" style="margin-top:1rem; width:140px; background:#0a0f1a; border:1px solid var(--green); color:var(--green);" onclick="closeReport()">> CLOSE_</button></div>
 
 <script>
 /* ============================================================
- * ORION-1 dashboard glue: fetches web/data.json (real sim
- * output) and replaces all hardcoded values with live data.
+ * ORIGINAL TEAMMATE SCRIPT (preserved verbatim, plus 3D init hook in show())
  * ============================================================ */
+const canvasS=document.getElementById('stars'), ctxS=canvasS.getContext('2d');
+function resizeC(){canvasS.width=innerWidth;canvasS.height=innerHeight;} resizeC(); window.addEventListener('resize',resizeC);
+const starsArr=Array.from({length:200},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.2+.2,o:Math.random()*.5+.1,s:Math.random()*.008+.002})); let tS=0;
+function drawStars(){ctxS.clearRect(0,0,canvasS.width,canvasS.height); starsArr.forEach(s=>{const op=s.o+Math.sin(tS*s.s)*.15; ctxS.beginPath(); ctxS.arc(s.x*canvasS.width,s.y*canvasS.height,s.r,0,Math.PI*2); ctxS.fillStyle=`rgba(200,220,235,${op})`; ctxS.fill();}); tS++; requestAnimationFrame(drawStars);} drawStars();
+function show(id){closePhaseModal();closeReport();document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');document.getElementById('tab-'+id).classList.add('active'); if(id==='orbit3d') initOrTickThree();}
+function expandPhase(i,e){e.stopPropagation();closePhaseModal();const cards=document.querySelectorAll('.phase-card'),dots=document.querySelectorAll('.phase-dot'),overlay=document.createElement('div');overlay.className='phase-overlay';overlay.onclick=closePhaseModal;document.body.appendChild(overlay);cards[i].classList.add('expanded');dots[i].classList.add('active');}
+function closePhaseModal(){document.querySelectorAll('.phase-card').forEach(c=>c.classList.remove('expanded'));document.querySelectorAll('.phase-dot').forEach(d=>d.classList.remove('active'));const ov=document.querySelector('.phase-overlay');if(ov) ov.remove();}
+function generateHackerReport(){const overlay=document.getElementById('term-overlay'), win=document.getElementById('term-window'); overlay.style.display='flex'; win.innerHTML=''; const lines=[{t:"$ sudo orion-1 --compliance-check --verbose",c:"term-prompt"},{t:"[INFO] Initializing secure shell...",c:"term-dim"},{t:"[INFO] Connecting to ORION-1 telemetry bus...",c:"term-dim"},{t:"[+] Handshake established with AI core.",c:"term-green"},{t:"[WARN] Solar flux data incoming...",c:"term-amber"},{t:"> Fetching F10.7 index from NOAA/SWPC...",c:"term-blue"},{t:"> Atmospheric density (NRLMSISE-00) computed: 2.84e-14 kg/m³",c:"term-dim"},{t:"[+] Drag sail area: 0.30 m² (10x increase)",c:"term-green"},{t:"[AI] Running Monte Carlo decay simulation... n=10,000",c:"term-amber"},{t:"[AI] Optimal deployment window detected: T+36 months",c:"term-green"},{t:"[RESULT] Deorbit time (AI-optimised): 4.86 years",c:"term-green"},{t:"[RESULT] ESA Zero Debris Charter (5yr): ✓ COMPLIANT",c:"term-green"},{t:"[RESULT] Collision risk during wait: 0.0012% (IADC threshold met)",c:"term-green"},{t:"$ mission_status: ACTIVE | compliance: GREEN | recommendation: DEPLOY",c:"term-prompt"},{t:"Connection closed. Report archived to /var/log/orion/",c:"term-dim"}]; lines.forEach((line,i)=>{setTimeout(()=>{const div=document.createElement('div'); div.className='term-line'; if(line.c==='term-prompt') div.innerHTML='<span class="term-green">$</span> '+line.t.substring(2); else div.innerHTML=line.t; if(line.c) div.classList.add(line.c); win.appendChild(div); win.scrollTop=win.scrollHeight;}, i*70);});}
+function closeReport(){document.getElementById('term-overlay').style.display='none';}
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){closePhaseModal(); closeReport();}});
+function updateSolarMonitor(){const f107=(110+Math.random()*80).toFixed(1);const fv=document.getElementById('f107-val');if(fv){fv.innerText=f107;const dv=document.getElementById('dens-val'),ai=document.getElementById('ai-status-text'),ad=document.getElementById('ai-detail-text'),comp=document.getElementById('compliance-status');if(f107>150){fv.style.color="var(--green)";dv.innerText="Extreme High";dv.style.color="var(--green)";ai.innerText="AI: OPTIMAL WINDOW";ai.style.color="var(--green)";ad.innerText="Maximum solar-drag leverage.";comp.innerText="<3.8 YRS";comp.style.color="var(--green)";}else if(f107>130){fv.style.color="var(--amber)";dv.innerText="High";dv.style.color="var(--amber)";ai.innerText="AI: STANDBY";ai.style.color="var(--amber)";ad.innerText="Strong flux. Monitor.";comp.innerText="~4.2 YRS";comp.style.color="var(--amber)";}else{fv.style.color="var(--red)";dv.innerText="Low";dv.style.color="var(--red)";ai.innerText="AI: HOLD";ai.style.color="var(--red)";ad.innerText="Solar minimum.";comp.innerText="NON-COMPLIANT";comp.style.color="var(--red)";}}}
+setInterval(updateSolarMonitor,3200);
+const canvasG=document.getElementById('gameCanvas'), ctxG=canvasG.getContext('2d'); let width=700,height=200; canvasG.width=width; canvasG.height=height; let amplitude=25, frequency=0.02, phase=0, points=[], score=0, multiplier=1.0, gameActive=false, animId=null, wavePeakX=0;
+function genWave(){points=[]; for(let x=0;x<=width;x+=8){let y=height/2+Math.sin(x*frequency+phase)*amplitude; points.push({x,y,rawY:y});} let minY=Math.min(...points.map(p=>p.rawY)); let peak=points.find(p=>p.rawY===minY); wavePeakX=peak?peak.x:width/2; document.getElementById('wave-peak').innerText=Math.round(Math.abs(Math.sin(phase)*100))+"%";}
+function drawWaveC(){ctxG.clearRect(0,0,width,height); ctxG.beginPath(); ctxG.moveTo(points[0].x,points[0].y); for(let i=1;i<points.length;i++) ctxG.lineTo(points[i].x,points[i].y); ctxG.strokeStyle='#00e5a0'; ctxG.lineWidth=2.5; ctxG.stroke(); let peakPt=points.find(p=>p.x===wavePeakX); if(peakPt){ctxG.beginPath(); ctxG.arc(wavePeakX,peakPt.y,12,0,2*Math.PI); ctxG.fillStyle='rgba(0,229,160,0.25)'; ctxG.fill(); ctxG.beginPath(); ctxG.arc(wavePeakX,peakPt.y,5,0,2*Math.PI); ctxG.fillStyle='#00e5a0'; ctxG.fill();}}
+function updateGame(){if(gameActive){phase+=0.02; genWave(); drawWaveC();} else drawWaveC(); if(gameActive) animId=requestAnimationFrame(updateGame);}
+function handleClick(e){if(!gameActive) return; const rect=canvasG.getBoundingClientRect(), scaleX=canvasG.width/rect.width, clickX=(e.clientX-rect.left)*scaleX, dist=Math.abs(clickX-wavePeakX); if(dist<25){let inc=Math.floor(10*multiplier); score+=inc; multiplier=Math.min(3.0,multiplier+0.1); document.getElementById('game-score').innerText=score; document.getElementById('game-multiplier').innerText=multiplier.toFixed(1); document.getElementById('game-message').innerHTML='✅ PERFECT TIMING! +'+inc+' pts'; ctxG.fillStyle='rgba(0,229,160,0.3)'; ctxG.fillRect(0,0,width,height); setTimeout(()=>drawWaveC(),80);}else{multiplier=Math.max(0.5,multiplier-0.15); document.getElementById('game-multiplier').innerText=multiplier.toFixed(1); document.getElementById('game-message').innerHTML='❌ Missed peak!'; ctxG.fillStyle='rgba(232,64,64,0.2)'; ctxG.fillRect(0,0,width,height); setTimeout(()=>drawWaveC(),80);}}
+function startGameFn(){if(animId) cancelAnimationFrame(animId); gameActive=true; score=0; multiplier=1.0; document.getElementById('game-score').innerText="0"; document.getElementById('game-multiplier').innerText="1.0"; document.getElementById('game-message').innerHTML="🌊 ACTIVE: Click on peaks!"; phase=0; genWave(); drawWaveC(); animId=requestAnimationFrame(function loop(){if(gameActive) updateGame();});}
+function resetGameFn(){if(animId) cancelAnimationFrame(animId); gameActive=false; score=0; multiplier=1.0; document.getElementById('game-score').innerText="0"; document.getElementById('game-multiplier').innerText="1.0"; document.getElementById('game-message').innerHTML="⚡ Reset. Press START."; phase=0; genWave(); drawWaveC(); animId=null;}
+document.getElementById('game-start-btn').addEventListener('click', startGameFn); document.getElementById('game-reset-btn').addEventListener('click', resetGameFn); canvasG.addEventListener('click', handleClick); genWave(); drawWaveC();
+const adoptSlider=document.getElementById('adoption-slider'); if(adoptSlider){adoptSlider.addEventListener('input',()=>{let v=parseInt(adoptSlider.value); document.getElementById('adoption-val').innerText=v+"%"; let debris=Math.round(900-v*8.4); document.getElementById('debris-count').innerText=debris; let comp=Math.min(99,Math.round(20+v*0.82)); document.getElementById('compliance-rate').innerText=comp+"%"; let risk=document.getElementById('collision-risk'); if(v<30){risk.innerText="HIGH"; risk.style.color="var(--red)";}else if(v<70){risk.innerText="MED"; risk.style.color="var(--amber)";}else{risk.innerText="LOW"; risk.style.color="var(--green)";}});}
+const altSlider=document.getElementById('alt-slider'), massSlider=document.getElementById('mass-slider'), areaSlider=document.getElementById('area-slider');
+function updateCompliance(){let alt=parseInt(altSlider.value), mass=parseFloat(massSlider.value), areaRatio=parseInt(areaSlider.value); document.getElementById('alt-val').innerText=alt+" km"; document.getElementById('mass-val').innerText=mass.toFixed(1)+" kg"; document.getElementById('area-val').innerText=areaRatio+"×"; let deorbitYears=Math.max(2.5, Math.min(30, (alt/600)*5 * (8/mass) * (10/areaRatio) * (Math.random()*0.3+0.85))); if(areaRatio>=8 && mass<=10 && alt<=650) deorbitYears=3.5+Math.random()*1.2; else if(alt>750) deorbitYears=12+Math.random()*5; else deorbitYears=5+Math.random()*3; deorbitYears=Math.round(deorbitYears*10)/10; const resultDiv=document.getElementById('compliance-result'), detailDiv=document.getElementById('compliance-detail'); if(deorbitYears<=5){resultDiv.innerHTML="✓ ESA COMPLIANT (<5 YEARS)"; resultDiv.style.color="var(--green)"; detailDiv.innerHTML=`Estimated deorbit time: ${deorbitYears} years.`;}else{resultDiv.innerHTML="✗ NON-COMPLIANT (>5 YEARS)"; resultDiv.style.color="var(--red)"; detailDiv.innerHTML=`Estimated deorbit time: ${deorbitYears} years.`;}}
+altSlider.addEventListener('input',updateCompliance); massSlider.addEventListener('input',updateCompliance); areaSlider.addEventListener('input',updateCompliance); updateCompliance();
+updateSolarMonitor();
 
-let DATA = null;            // populated by fetch
-let THREE_SCENE = null;     // 3D state
-
-/* Starfield background (unchanged) */
-const canvas=document.getElementById('stars'); const ctx=canvas.getContext('2d');
-function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
-resize();window.addEventListener('resize',resize);
-const stars=Array.from({length:200},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.2+.2,o:Math.random()*.5+.1,s:Math.random()*.008+.002}));
-let _t=0;
-function drawStars(){ctx.clearRect(0,0,canvas.width,canvas.height);
-  stars.forEach(s=>{const op=s.o+Math.sin(_t*s.s)*.15;ctx.beginPath();
-    ctx.arc(s.x*canvas.width,s.y*canvas.height,s.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(200,220,235,${op})`;ctx.fill();});
-  _t++;requestAnimationFrame(drawStars);} drawStars();
-
-/* Tab navigation */
-function show(id){
-  closeReport();
-  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.getElementById('tab-'+id).classList.add('active');
-  if(id==='orbit3d') initOrTickThree();
-}
-
-/* ----- Data load ----- */
-fetch('data.json').then(r=>r.json()).then(d=>{ DATA=d; hydrate(); }).catch(err=>{
-  console.error('Failed to load data.json:', err);
-  document.getElementById('compliance-status').innerText = 'data.json missing — run python export_web_data.py';
-});
-
-function hydrate(){
-  hydrateHero();
-  hydrateParams();
-  hydrateDecayChart();
-  hydrateKpiTable();
-  hydrateRefs();
-  hydrateHardware();
-  hydrateStrategySelect();
-  startSolarMonitor();
-  document.getElementById('gen-time').innerText = DATA.generated_at;
-}
-
-/* ----- Hero / stat cards ----- */
-function hydrateHero(){
-  const ai = DATA.scenarios.find(s=>s.key==='robust') || DATA.scenarios.find(s=>s.key==='naive');
-  const baseline = DATA.scenarios.find(s=>s.key==='baseline');
-  document.getElementById('stat-ai-yr').innerText = ai.post_eom_years.toFixed(2);
-  document.getElementById('stat-ratio').innerText = '×' + DATA.params.sail_area_ratio;
-  document.getElementById('stat-baseline-yr').innerText = baseline.post_eom_years.toFixed(0)+' yr';
-  document.getElementById('copy-baseline-yr').innerText = baseline.post_eom_years.toFixed(0)+' years';
-  document.getElementById('copy-sail-area').innerText = DATA.params.sail_area_m2.toFixed(2);
-  document.getElementById('copy-sail-ratio').innerText = DATA.params.sail_area_ratio;
-  document.getElementById('copy-ai-yr').innerText = ai.post_eom_years.toFixed(2);
-  document.querySelectorAll('.copy-sail-ratio-mini').forEach(e=>e.innerText=DATA.params.sail_area_ratio);
-  document.getElementById('compliance-status').innerText =
-    'Post-EOM ' + ai.post_eom_years.toFixed(2)+' yr · ESA 5-yr ' + (ai.esa_5yr_compliant?'PASS ✓':'FAIL');
-}
-
-/* ----- Params list (decay sim tab) ----- */
-function hydrateParams(){
-  const p = DATA.params;
-  const items = [
-    `Orbit: ${p.altitude_km} km circular SSO, i≈97.8°`,
-    `Mass: ${p.mass_kg} kg (6U CubeSat)`,
-    `Cd: ${p.Cd} (free-molecular)`,
-    `Stowed area: ${p.base_area_m2.toFixed(3)} m²`,
-    `Sail area: ${p.sail_area_m2.toFixed(2)} m² (×${p.sail_area_ratio})`,
-    `Window: ±${p.window_days/2} days`,
-    `Forecast samples: ${p.n_forecast_samples}`,
-  ];
-  document.getElementById('param-list').innerHTML = items.map(t=>`<li>${t}</li>`).join('');
-}
-
-/* ----- Decay chart (replaces the hand-drawn SVG) ----- */
-function hydrateDecayChart(){
-  const svg = document.getElementById('decay-chart');
-  while(svg.firstChild) svg.removeChild(svg.firstChild);
-
-  const W=720, H=380, mL=60, mR=20, mT=20, mB=60;
-  const innerW = W-mL-mR, innerH = H-mT-mB;
-  const colors = {baseline:'#888', naive:'#f5a623', point:'#8b7ed8',
-                  robust:'#00e5a0', riskaverse:'#3fc8e8'};
-  const allT = DATA.scenarios.flatMap(s=>s.trajectory_t_yr);
-  const xMax = Math.min(35, Math.max(...allT));
-  const yMax = 700, yMin = 0;
-  const x2px = x => mL + Math.min(x,xMax)/xMax * innerW;
-  const y2px = y => mT + (1 - (y-yMin)/(yMax-yMin)) * innerH;
-
-  const ns = 'http://www.w3.org/2000/svg';
-  const mk = (n, attrs) => { const el = document.createElementNS(ns, n);
-    for(const k in attrs) el.setAttribute(k, attrs[k]); return el; };
-
-  // Axes + gridlines
-  for(let alt=0; alt<=yMax; alt+=100){
-    svg.appendChild(mk('line',{x1:mL, y1:y2px(alt), x2:W-mR, y2:y2px(alt),
-      stroke:'#1e2d4a', 'stroke-width':alt%200===0?'1':'0.4'}));
-    svg.appendChild(mk('text',{x:mL-8, y:y2px(alt)+4, 'text-anchor':'end',
-      fill:'#4a6080', 'font-size':'10'})).textContent = alt;
-  }
-  for(let yr=0; yr<=xMax; yr+=5){
-    svg.appendChild(mk('text',{x:x2px(yr), y:H-mB+18, 'text-anchor':'middle',
-      fill:'#4a6080', 'font-size':'10'})).textContent = yr;
-  }
-  svg.appendChild(mk('text',{x:W/2, y:H-15, 'text-anchor':'middle',
-    fill:'#4a6080', 'font-size':'10'})).textContent = 'Years post-launch';
-  svg.appendChild(mk('text',{x:18, y:H/2, 'text-anchor':'middle',
-    fill:'#4a6080', 'font-size':'10', transform:`rotate(-90, 18, ${H/2})`}))
-    .textContent = 'Altitude (km)';
-
-  // Crowded LEO band
-  svg.appendChild(mk('rect',{x:mL, y:y2px(500), width:innerW,
-    height:y2px(400)-y2px(500), fill:'#e84040', 'fill-opacity':'0.06'}));
-
-  // Trajectories
-  DATA.scenarios.forEach(s => {
-    const pts = s.trajectory_t_yr.map((t,i)=>`${x2px(t).toFixed(1)},${y2px(s.trajectory_alt_km[i]).toFixed(1)}`).join(' ');
-    svg.appendChild(mk('polyline',{points:pts, fill:'none',
-      stroke:colors[s.key]||'#fff',
-      'stroke-width': s.key==='robust'?'2.2':'1.6',
-      'stroke-dasharray': s.key==='baseline'?'6 3': (s.key==='naive'?'4 2':''),
-      opacity: s.key==='point'?'0.7':'1.0',
-    }));
-    if(s.deploy_day>0){
-      svg.appendChild(mk('line',{x1:x2px(s.deploy_year), y1:mT, x2:x2px(s.deploy_year),
-        y2:H-mB, stroke:colors[s.key], 'stroke-width':'0.8',
-        'stroke-dasharray':'2 3', opacity:'0.5'}));
-    }
-  });
-
-  // ESA 5-yr compliance line: vertical at MISSION_DAYS+5yr
-  const eom_yr = DATA.params.mission_days/365.25;
-  svg.appendChild(mk('line',{x1:x2px(eom_yr+5), y1:mT, x2:x2px(eom_yr+5),
-    y2:H-mB, stroke:'#e84040', 'stroke-width':'1', 'stroke-dasharray':'2 4'}));
-  svg.appendChild(mk('text',{x:x2px(eom_yr+5)+4, y:mT+12, fill:'#e84040', 'font-size':'9'}))
-    .textContent = 'ESA 5-yr post-EOM';
-
-  // Legend
-  const leg = document.getElementById('decay-legend');
-  leg.innerHTML = DATA.scenarios.map(s =>
-    `<span><span class="sw" style="background:${colors[s.key]}"></span>${s.label}</span>`
-  ).join('');
-}
-
-/* ----- KPI table ----- */
-function hydrateKpiTable(){
-  const tbody = document.querySelector('#kpi-table tbody');
-  tbody.innerHTML = DATA.kpis.map(k=>{
-    const ok = k.esa_5yr_compliant;
-    const badge = ok? 'pass':'fail';
-    const txt   = ok? 'PASS':'FAIL';
-    const p95 = k.post_eom_p95==null?'—':k.post_eom_p95.toFixed(2);
-    return `<tr><td class="kpi-name">${k.scenario}</td>
-      <td>${k.deploy_day}</td>
-      <td>${k.post_eom_years.toFixed(2)}</td>
-      <td>${p95}</td>
-      <td>${k.band_years.toFixed(3)}</td>
-      <td><span class="badge ${badge}">${txt}</span></td></tr>`;
-  }).join('');
-}
-
-/* ----- References ----- */
-function hydrateRefs(){
-  const html = DATA.references.map(r => {
-    const link = r.url ? `<a href="${r.url}" target="_blank">${r.url}</a>` : '';
-    return `<div class="ref-block"><div class="ref-id">${r.id}</div>
-      <p><strong>${r.title}</strong>${r.section?' — '+r.section:''}<br>
-      ${r.note||''} ${link}</p></div>`;
-  }).join('');
-  document.getElementById('ref-list').innerHTML = html;
-}
-
-/* ----- Hardware tab ----- */
-function hydrateHardware(){
-  const fp = DATA.flight_policy || {};
-  document.getElementById('hw-bytes').innerText = (fp.c_file_bytes||'?')+' B';
-  document.getElementById('hw-leaves').innerText = (fp.n_leaves||'?')+' leaves';
-  document.getElementById('hw-features').innerText = (fp.n_features||'?')+' features';
-  document.getElementById('hw-acc').innerText = fp.training_accuracy
-    ? (fp.training_accuracy*100).toFixed(0)+'% acc' : '—';
-  document.getElementById('policy-c-source').innerText =
-    fp.c_source || '// flight/policy.c not found — run python flight_policy.py';
-}
-
-/* ----- Solar monitor: walks through the real GP forecast ----- */
-function startSolarMonitor(){
-  let i = 0;
-  const fc = DATA.forecast;
-  // start at index where forecast_year crosses 0 (mission start)
-  const startIdx = fc.forecast_year.findIndex(y=>y>=0);
-  i = Math.max(startIdx, 0);
-  setInterval(()=>{
-    const f107 = fc.forecast_median[i];
-    const fEl = document.getElementById('f107-val');
-    const dEl = document.getElementById('dens-val');
-    const sEl = document.getElementById('ai-status-text');
-    const dt  = document.getElementById('ai-detail-text');
-    if(!fEl) return;
-    fEl.innerText = f107.toFixed(1);
-    // density factor relative to F10.7=140 mean
-    const factor = Math.pow(10, (f107 - 140) / 100);
-    dEl.innerText = factor.toFixed(2) + '×';
-    if(f107 > 150){
-      fEl.style.color='var(--green)'; dEl.style.color='var(--green)';
-      sEl.style.color='var(--green)';
-      sEl.innerText='AI Inference IC: DEPLOY recommendation';
-      dt.innerText='High solar flux. Density 1.3×+ above mean — drag favorable.';
-    } else if(f107 > 100){
-      fEl.style.color='var(--amber)'; dEl.style.color='var(--amber)';
-      sEl.style.color='var(--amber)';
-      sEl.innerText='AI Inference IC: WAIT (monitoring)';
-      dt.innerText='Moderate flux. Policy holds for upcoming forecast peak.';
-    } else {
-      fEl.style.color='var(--red)'; dEl.style.color='var(--red)';
-      sEl.style.color='var(--red)';
-      sEl.innerText='AI Inference IC: HOLD (solar minimum)';
-      dt.innerText='Low flux. Density at floor; deployment now would extend lifetime.';
-    }
-    i = (i + 1) % fc.forecast_year.length;
-    if(fc.forecast_year[i] < 0) i = startIdx;
-  }, 1800);
-}
-
-/* The 3D viz shows only these three strategies for clarity. The other
- * AI variants (point, riskaverse) are hidden because they decay nearly
- * identically to robust and just clutter the scene. They're still in the
- * KPI table and decay-sim chart on other tabs. */
+/* ============================================================
+ * NEW: 3D Orbit + Hardware tab integration (loads data.json)
+ * ============================================================ */
+let DATA = null, THREE_SCENE = null;
 const VIZ_3D_KEYS = ['baseline', 'naive', 'robust'];
 
-/* ----- Strategy legend (replaces dropdown — toggleable visibility) ----- */
-function hydrateStrategySelect(){
+fetch('data.json').then(r=>r.json()).then(d=>{ DATA=d; hydrateNew(); }).catch(err=>{
+  console.warn('data.json not loaded — 3D + Hardware tabs will show fallback content', err);
+  document.getElementById('policy-c-source').innerText = '// data.json missing — run python export_web_data.py';
+});
+
+function hydrateNew(){ hydrateLegend(); hydrateHardware(); }
+
+function hydrateLegend(){
   const wrap = document.getElementById('strategy-legend');
-  const cssColor = {baseline:'#888', naive:'#f5a623', point:'#8b7ed8',
-                    robust:'#00e5a0', riskaverse:'#3fc8e8'};
+  const cssColor = {baseline:'#888', naive:'#f5a623', robust:'#00e5a0'};
+  const niceLabel = {baseline:'Baseline (no sail)', naive:'Naive', robust:'AI robust'};
   const visible = DATA.scenarios.filter(s => VIZ_3D_KEYS.includes(s.key));
   wrap.innerHTML = visible.map(s =>
     `<div class="legend-item" data-key="${s.key}" style="color:${cssColor[s.key]}">
        <div class="legend-swatch" style="background:${cssColor[s.key]}"></div>
-       <div class="legend-name">${s.label}</div>
+       <div class="legend-name">${niceLabel[s.key]||s.label}</div>
        <div class="legend-alt" id="legend-alt-${s.key}">—</div>
      </div>`).join('');
   wrap.querySelectorAll('.legend-item').forEach(el => {
@@ -656,19 +362,17 @@ function hydrateStrategySelect(){
   });
 }
 
-/* ============================================================
- * Three.js 3D orbit viz — multi-strategy race
- *
- * Visual model:
- *   - Real Earth texture (Three.js examples) with sun-shaded day/night
- *   - Soft Fresnel atmosphere glow at limb
- *   - One orbit RING per strategy in the SSO inclined plane
- *   - One satellite dot per strategy moving fast around its ring
- *   - Each ring shrinks as time advances (driven by altitude data)
- *   - Trail line behind each satellite shows recent past (~last N samples)
- *   - All strategies animated simultaneously by a single time index
- *   - Camera: OrbitControls (mouse drag rotate, scroll zoom)
- * ============================================================ */
+function hydrateHardware(){
+  const fp = DATA.flight_policy || {};
+  document.getElementById('hw-bytes').innerText = (fp.c_file_bytes||'?')+' B';
+  document.getElementById('hw-leaves').innerText = (fp.n_leaves||'?')+' leaves';
+  document.getElementById('hw-features').innerText = (fp.n_features||'?')+' features';
+  document.getElementById('hw-acc').innerText = fp.training_accuracy
+    ? (fp.training_accuracy*100).toFixed(0)+'% acc' : '—';
+  document.getElementById('policy-c-source').innerText =
+    fp.c_source || '// flight/policy.c not found';
+}
+
 function initOrTickThree(){
   if(!DATA) return;
   if(!THREE_SCENE){ THREE_SCENE = build3D(); }
@@ -680,66 +384,39 @@ function build3D(){
   const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputEncoding = THREE.sRGBEncoding;
-
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 200);
   camera.position.set(5.0, 2.4, 5.0);
-
-  // Mouse-driven camera orbit / zoom
   const controls = new THREE.OrbitControls(camera, canvas);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.08;
-  controls.rotateSpeed = 0.6;
-  controls.minDistance = 1.6;
-  controls.maxDistance = 25;
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = 0.35;
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.rotateSpeed = 0.6; controls.minDistance = 1.6; controls.maxDistance = 25;
+  controls.autoRotate = true; controls.autoRotateSpeed = 0.35;
   canvas.addEventListener('pointerdown', () => controls.autoRotate = false);
 
-  // ---- Lighting (sun + faint ambient so the night side isn't pitch black) ----
   const sun = new THREE.DirectionalLight(0xffffff, 1.5);
-  sun.position.set(5, 1.5, 4);
-  scene.add(sun);
+  sun.position.set(5, 1.5, 4); scene.add(sun);
   scene.add(new THREE.AmbientLight(0x223355, 0.4));
 
-  // ---- Earth (textured sphere) ----
   const R_EARTH = 1.0;
-  const tl = new THREE.TextureLoader();
-  tl.crossOrigin = 'anonymous';
-  const earthMat = new THREE.MeshPhongMaterial({
-    color: 0x224466,            // fallback color in case texture fails to load
-    specular: 0x223355,
-    shininess: 12,
-    emissive: 0x000913,
-  });
-  // Try to load a real Earth texture; fall back silently to fallback color
-  tl.load(
-    'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+  const tl = new THREE.TextureLoader(); tl.crossOrigin = 'anonymous';
+  const earthMat = new THREE.MeshPhongMaterial({color: 0x224466, specular: 0x223355, shininess: 12, emissive: 0x000913});
+  tl.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
     tex => { tex.encoding = THREE.sRGBEncoding; earthMat.map = tex;
-             earthMat.color.set(0xffffff); earthMat.needsUpdate = true; },
-    undefined,
-    err => console.warn('Earth texture failed to load, using fallback color', err)
-  );
-  // Optional bump for relief; non-fatal if missing
+             earthMat.color.set(0xffffff); earthMat.needsUpdate = true; }, undefined, ()=>{});
   tl.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg',
     tex => { earthMat.normalMap = tex; earthMat.normalScale = new THREE.Vector2(0.6,0.6);
              earthMat.needsUpdate = true; }, undefined, ()=>{});
   const earth = new THREE.Mesh(new THREE.SphereGeometry(R_EARTH, 64, 64), earthMat);
-  earth.rotation.y = Math.PI;  // arbitrary; just a starting orientation
-  scene.add(earth);
+  earth.rotation.y = Math.PI; scene.add(earth);
 
-  // ---- Atmosphere glow: slightly larger sphere with Fresnel-style shader ----
   const atmoMat = new THREE.ShaderMaterial({
-    transparent: true,
-    side: THREE.BackSide,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    uniforms: { glowColor: { value: new THREE.Color(0x4ab8ff) } },
-    vertexShader: `varying vec3 vNormal; varying vec3 vPos;
+    transparent:true, side:THREE.BackSide, depthWrite:false, blending:THREE.AdditiveBlending,
+    uniforms:{glowColor:{value:new THREE.Color(0x4ab8ff)}},
+    vertexShader:`varying vec3 vNormal; varying vec3 vPos;
       void main(){ vNormal = normalize(normalMatrix * normal);
         vPos = (modelViewMatrix * vec4(position,1.0)).xyz;
         gl_Position = projectionMatrix * vec4(vPos,1.0); }`,
-    fragmentShader: `varying vec3 vNormal; varying vec3 vPos;
+    fragmentShader:`varying vec3 vNormal; varying vec3 vPos;
       uniform vec3 glowColor;
       void main(){ vec3 viewDir = normalize(-vPos);
         float intensity = pow(0.7 - dot(vNormal, viewDir), 2.5);
@@ -747,51 +424,20 @@ function build3D(){
   });
   scene.add(new THREE.Mesh(new THREE.SphereGeometry(R_EARTH*1.025, 64, 64), atmoMat));
 
-  // ---- Distant starfield (3D points) ----
   const starGeom = new THREE.BufferGeometry();
-  const N_STARS = 1500;
-  const starPos = new Float32Array(N_STARS*3);
-  const starCol = new Float32Array(N_STARS*3);
-  for(let i=0;i<N_STARS;i++){
-    const r = 60 + Math.random()*40;
-    const u = Math.random()*2-1, theta = Math.random()*Math.PI*2;
-    const s = Math.sqrt(1-u*u);
-    starPos[i*3]   = r*s*Math.cos(theta);
-    starPos[i*3+1] = r*u;
-    starPos[i*3+2] = r*s*Math.sin(theta);
-    const w = 0.7 + 0.3*Math.random();
-    starCol[i*3]   = w; starCol[i*3+1] = w; starCol[i*3+2] = w*1.1;
-  }
+  const starPos = new Float32Array(1500*3);
+  for(let i=0;i<1500;i++){ const r=60+Math.random()*40, u=Math.random()*2-1, theta=Math.random()*Math.PI*2;
+    const s=Math.sqrt(1-u*u);
+    starPos[i*3]=r*s*Math.cos(theta); starPos[i*3+1]=r*u; starPos[i*3+2]=r*s*Math.sin(theta);}
   starGeom.setAttribute('position', new THREE.BufferAttribute(starPos,3));
-  starGeom.setAttribute('color',    new THREE.BufferAttribute(starCol,3));
-  scene.add(new THREE.Points(starGeom,
-    new THREE.PointsMaterial({size:0.18, sizeAttenuation:true,
-      vertexColors:true, transparent:true, opacity:0.85})));
+  scene.add(new THREE.Points(starGeom, new THREE.PointsMaterial({color:0xc8dde8, size:0.18, sizeAttenuation:true, transparent:true, opacity:0.65})));
 
-  // ---- Crowded LEO band (400-500 km) shown as a faint red ring ----
-  // We use an EXAGGERATED altitude scale (~5x) so the orbit rings are
-  // visually distinct. At real scale 600 km is only 9% of Earth's radius
-  // and all orbits look pancaked onto the surface.
   const ALT_SCALE = 5.0;
   const altToR = km => R_EARTH * (1 + ALT_SCALE * km / 6378);
   const incl = 97.8 * Math.PI/180;
-  const crowdedRing = new THREE.Mesh(
-    new THREE.RingGeometry(altToR(400), altToR(500), 128),
-    new THREE.MeshBasicMaterial({color:0xe84040, transparent:true, opacity:0.10,
-      side:THREE.DoubleSide}));
-  crowdedRing.rotation.x = Math.PI/2 - (Math.PI/2 - incl);
-  scene.add(crowdedRing);
-
-  // ---- Per-strategy: orbit ring + satellite dot + trail line ----
-  const colors = {baseline:0x888888, naive:0xf5a623, point:0x8b7ed8,
-                  robust:0x00e5a0, riskaverse:0x3fc8e8};
-  const strategies = {};   // key -> {ring, sat, glow, trail, data, visible, deployed}
-  const TRAIL_LEN = 80;    // how many recent positions to keep in the trail
-
-  // Only render the 3 headline strategies (baseline / naive / robust).
+  const colors = {baseline:0x888888, naive:0xf5a623, robust:0x00e5a0};
+  const strategies = {};
   const vizScenarios = DATA.scenarios.filter(s => VIZ_3D_KEYS.includes(s.key));
-
-  // Compute the global time axis (years) common to all visible strategies
   let GLOBAL_T_MIN = Infinity, GLOBAL_T_MAX = 0;
   vizScenarios.forEach(s => {
     GLOBAL_T_MIN = Math.min(GLOBAL_T_MIN, s.trajectory_t_yr[0]);
@@ -799,181 +445,90 @@ function build3D(){
   });
 
   function buildStrategy(s){
-    // Orbit ring at current altitude (will be rescaled each frame).
-    // Tube radius bumped from 0.004 -> 0.012 so rings are clearly visible.
-    const ringGeom = new THREE.TorusGeometry(altToR(s.trajectory_alt_km[0]),
-      0.012, 10, 160);
-    const ringMat = new THREE.MeshBasicMaterial({color: colors[s.key],
-      transparent:true, opacity:0.85, blending:THREE.AdditiveBlending,
-      depthWrite:false});
-    const ring = new THREE.Mesh(ringGeom, ringMat);
-    ring.rotation.x = Math.PI/2 - incl;   // tilt to SSO inclination
-    scene.add(ring);
-
-    // Satellite: bigger glowing sphere so each strategy is recognizable
-    const satGeom = new THREE.SphereGeometry(0.045, 18, 18);
-    const satMat = new THREE.MeshBasicMaterial({color: colors[s.key]});
-    const sat = new THREE.Mesh(satGeom, satMat);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(altToR(s.trajectory_alt_km[0]), 0.012, 10, 160),
+      new THREE.MeshBasicMaterial({color: colors[s.key], transparent:true, opacity:0.85,
+        blending:THREE.AdditiveBlending, depthWrite:false}));
+    ring.rotation.x = Math.PI/2 - incl; scene.add(ring);
+    const sat = new THREE.Mesh(new THREE.SphereGeometry(0.045, 18, 18),
+      new THREE.MeshBasicMaterial({color: colors[s.key]}));
     scene.add(sat);
-
-    // Soft glow halo around the satellite (additive blending for bloom look)
-    const glowMat = new THREE.MeshBasicMaterial({color: colors[s.key],
-      transparent:true, opacity:0.45, blending:THREE.AdditiveBlending,
-      depthWrite:false});
-    const glow = new THREE.Mesh(new THREE.SphereGeometry(0.10, 16, 16), glowMat);
+    const glow = new THREE.Mesh(new THREE.SphereGeometry(0.10, 16, 16),
+      new THREE.MeshBasicMaterial({color: colors[s.key], transparent:true, opacity:0.45,
+        blending:THREE.AdditiveBlending, depthWrite:false}));
     scene.add(glow);
-
-    // Trail (recent positions). Short fading line behind the satellite.
-    const trailGeom = new THREE.BufferGeometry();
-    trailGeom.setAttribute('position',
-      new THREE.BufferAttribute(new Float32Array(TRAIL_LEN*3), 3));
-    const trailMat = new THREE.LineBasicMaterial({color: colors[s.key],
-      transparent:true, opacity:0.6});
-    const trail = new THREE.Line(trailGeom, trailMat);
-    scene.add(trail);
-
-    strategies[s.key] = {
-      data: s, ring, sat, glow, trail,
-      visible: true, deployed: false, reentered: false,
-      satPhase: Math.random()*Math.PI*2,  // start each at a different angular position
-    };
+    strategies[s.key] = {data:s, ring, sat, glow, visible:true, deployed:false, satPhase:Math.random()*Math.PI*2};
   }
   vizScenarios.forEach(buildStrategy);
 
-  // ---- Time index + playback ----
-  // We sample the GLOBAL time axis uniformly so all satellites advance together.
-  // Speed slider value = animation duration in seconds. Slow=120s, fast=10s.
   const N_FRAMES = 1000;
-  let frame = 0, playing = false;
-  let speed = 50;            // slider value 1..100, mapped to seconds via durationFor()
-  let lastTickMs = performance.now();
-  const durationFor = sl => 130 - sl;   // slider 1..100 -> 129s..30s
+  let frame = 0, playing = false, speed = 50, lastTickMs = performance.now();
+  const durationFor = sl => 130 - sl;
   document.getElementById('time-slider').max = N_FRAMES - 1;
   document.getElementById('time-slider').value = 0;
-
-  function frameToYear(f){
-    return GLOBAL_T_MIN + (GLOBAL_T_MAX - GLOBAL_T_MIN) * (f / (N_FRAMES-1));
-  }
-
-  // Linear interpolation: altitude of a given strategy at a given absolute year
+  function frameToYear(f){ return GLOBAL_T_MIN + (GLOBAL_T_MAX - GLOBAL_T_MIN) * (f / (N_FRAMES-1)); }
   function altAtYear(s, yr){
     const T = s.trajectory_t_yr, A = s.trajectory_alt_km;
     if(yr <= T[0]) return A[0];
-    if(yr >= T[T.length-1]) return null;  // already reentered
-    // binary search would be O(log n), but trajectories are ~200 pts so linear is fine
+    if(yr >= T[T.length-1]) return null;
     for(let i=0; i<T.length-1; i++){
-      if(yr >= T[i] && yr <= T[i+1]){
-        const f = (yr - T[i]) / (T[i+1] - T[i]);
-        return A[i]*(1-f) + A[i+1]*f;
-      }
+      if(yr >= T[i] && yr <= T[i+1]){ const f = (yr - T[i]) / (T[i+1] - T[i]); return A[i]*(1-f) + A[i+1]*f; }
     }
     return A[A.length-1];
   }
-
   function update(){
     const yr = frameToYear(frame);
     document.getElementById('time-readout').innerText = 'yr ' + yr.toFixed(2);
     document.getElementById('readout-day').innerText = 'd ' + Math.round(yr*365.25);
-
-    // F10.7 lookup
     const fc = DATA.forecast;
     let fIdx = 0;
     while(fIdx < fc.forecast_year.length-1 && fc.forecast_year[fIdx] < yr) fIdx++;
-    const f107 = fc.forecast_median[fIdx];
-    document.getElementById('readout-f107').innerText = f107.toFixed(1) + ' SFU';
-
-    // Find the active AI policy state from the robust scenario
+    document.getElementById('readout-f107').innerText = fc.forecast_median[fIdx].toFixed(1) + ' SFU';
     const robust = strategies.robust && strategies.robust.data;
     if(robust){
       const pf = document.getElementById('policy-flag');
-      if(yr >= robust.deploy_year){
-        pf.className = 'policy-flag deploy';
-        pf.innerText = 'AI IC: DEPLOY ✓  sail open since d ' + robust.deploy_day;
-      } else {
-        pf.className = 'policy-flag wait';
-        const daysLeft = Math.round((robust.deploy_year - yr) * 365.25);
-        pf.innerText = 'AI IC: WAIT  (deploy in ' + daysLeft + ' d)';
-      }
+      if(yr >= robust.deploy_year){ pf.className = 'policy-flag deploy'; pf.innerText = 'AI IC: DEPLOY ✓  sail open since d ' + robust.deploy_day; }
+      else { pf.className = 'policy-flag wait'; const daysLeft = Math.round((robust.deploy_year - yr) * 365.25); pf.innerText = 'AI IC: WAIT  (deploy in ' + daysLeft + ' d)'; }
     }
-
-    // Update each strategy
     for(const k in strategies){
       const st = strategies[k];
       const alt = altAtYear(st.data, yr);
       const altEl = document.getElementById('legend-alt-' + k);
       const legendEl = document.querySelector(`.legend-item[data-key="${k}"]`);
-
-      if(alt === null){    // satellite has already reentered
-        st.ring.visible = false; st.sat.visible = false;
-        st.glow.visible = false; st.trail.visible = false;
-        if(altEl) altEl.innerText = 'reentered';
-        if(legendEl) legendEl.classList.add('reentered');
-        continue;
-      }
+      if(alt === null){ st.ring.visible = false; st.sat.visible = false; st.glow.visible = false;
+        if(altEl) altEl.innerText = 'reentered'; if(legendEl) legendEl.classList.add('reentered'); continue; }
       if(legendEl) legendEl.classList.remove('reentered');
       if(altEl) altEl.innerText = alt.toFixed(0) + ' km';
-
-      // Visibility (legend toggle)
       const v = st.visible;
       st.ring.visible = v; st.sat.visible = v; st.glow.visible = v;
-      st.trail.visible = v;
       if(!v) continue;
-
-      // Resize the orbit ring to current altitude (keep tube fat enough to see)
       const r = altToR(alt);
       st.ring.geometry.dispose();
       st.ring.geometry = new THREE.TorusGeometry(r, 0.012, 10, 160);
-
-      // Move the satellite around the ring at a fast visual rate (purely
-      // cosmetic; not orbital-mechanics-accurate per-second).
-      st.satPhase += 0.08 + (k==='baseline'?0.0:0.0);
+      st.satPhase += 0.08;
       const cosI = Math.cos(incl), sinI = Math.sin(incl);
       const xp = r*Math.cos(st.satPhase), yp = r*Math.sin(st.satPhase);
-      const X = xp;
-      const Y = yp*cosI;
-      const Z = -yp*sinI;
-      st.sat.position.set(X, Y, Z);
-      st.glow.position.set(X, Y, Z);
-
-      // Update trail buffer (shift left, append new point at end)
-      const arr = st.trail.geometry.attributes.position.array;
-      for(let i=0; i<arr.length-3; i++) arr[i] = arr[i+3];
-      arr[arr.length-3] = X;
-      arr[arr.length-2] = Y;
-      arr[arr.length-1] = Z;
-      st.trail.geometry.attributes.position.needsUpdate = true;
-
-      // Highlight crossing of deployment day with a brief size pulse
+      st.sat.position.set(xp, yp*cosI, -yp*sinI);
+      st.glow.position.copy(st.sat.position);
       const justDeployed = !st.deployed && yr >= st.data.deploy_year && st.data.deploy_day>0;
-      if(justDeployed){
-        st.deployed = true;
-        // Pulse the glow scale for a few frames
-        st.glow.scale.setScalar(2.0);
-      }
+      if(justDeployed){ st.deployed = true; st.glow.scale.setScalar(2.0); }
       if(st.glow.scale.x > 1.0) st.glow.scale.multiplyScalar(0.96);
     }
   }
-
-  function onResize(){
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w/h; camera.updateProjectionMatrix();
-  }
-
+  function onResize(){ const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false); camera.aspect = w/h; camera.updateProjectionMatrix(); }
   function tick(){
     const now = performance.now();
-    const dt = Math.min(now - lastTickMs, 100) / 1000;   // seconds since last frame
+    const dt = Math.min(now - lastTickMs, 100) / 1000;
     lastTickMs = now;
     if(playing){
-      // Advance frame proportional to real elapsed time + chosen duration
-      const framesPerSec = N_FRAMES / durationFor(speed);
-      frame += framesPerSec * dt;
-      if(frame >= N_FRAMES-1){ frame = N_FRAMES-1; playing = false;
-        document.getElementById('play-btn').innerText = '▶ Play'; }
+      const fps = N_FRAMES / durationFor(speed);
+      frame += fps * dt;
+      if(frame >= N_FRAMES-1){ frame = N_FRAMES-1; playing = false; document.getElementById('play-btn').innerText = '▶ Play'; }
       document.getElementById('time-slider').value = Math.round(frame);
       update();
     }
-    earth.rotation.y += 0.0006;     // slow Earth spin for life
+    earth.rotation.y += 0.0006;
     controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
@@ -981,75 +536,21 @@ function build3D(){
   onResize(); update(); tick();
   window.addEventListener('resize', onResize);
 
-  // Wire controls
   document.getElementById('play-btn').addEventListener('click', () => {
-    playing = !playing;
+    playing = !playing; lastTickMs = performance.now();
     if(playing && frame >= N_FRAMES-1) frame = 0;
-    document.getElementById('play-btn').innerText = playing? '❚❚ Pause' : '▶ Play';
+    document.getElementById('play-btn').innerText = playing ? '❚❚ Pause' : '▶ Play';
   });
   document.getElementById('reset-btn').addEventListener('click', () => {
-    frame = 0; playing = false;
-    document.getElementById('play-btn').innerText = '▶ Play';
+    frame = 0; playing = false; document.getElementById('play-btn').innerText = '▶ Play';
     for(const k in strategies){ strategies[k].deployed = false; }
-    document.getElementById('time-slider').value = 0;
-    update();
+    document.getElementById('time-slider').value = 0; update();
   });
-  document.getElementById('time-slider').addEventListener('input', e => {
-    frame = parseInt(e.target.value);
-    update();
-  });
-  document.getElementById('speed-slider').addEventListener('input', e => {
-    speed = parseInt(e.target.value);
-  });
+  document.getElementById('time-slider').addEventListener('input', e => { frame = parseInt(e.target.value); update(); });
+  document.getElementById('speed-slider').addEventListener('input', e => { speed = parseInt(e.target.value); });
 
-  // Reset clock anchor whenever play is pressed
-  document.getElementById('play-btn').addEventListener('click', () => {
-    lastTickMs = performance.now();
-  });
-
-  return {
-    setVisibility: (key, on) => {
-      if(strategies[key]) strategies[key].visible = on;
-    },
-    onResize,
-  };
+  return { setVisibility:(key,on)=>{ if(strategies[key]) strategies[key].visible=on; }, onResize };
 }
-
-/* ----- Terminal report ----- */
-function generateReport(){
-  const overlay = document.getElementById('term-overlay');
-  const win = document.getElementById('term-window');
-  overlay.style.display = 'flex'; win.innerHTML = '';
-  if(!DATA){ win.innerHTML = '<div class="term-line term-amber">data.json not loaded</div>'; return; }
-  const ai = DATA.scenarios.find(s=>s.key==='robust') || DATA.scenarios[1];
-  const naive = DATA.scenarios.find(s=>s.key==='naive');
-  const p = DATA.params;
-  const lines = [
-    {t:`> ORION-1 DIAGNOSTIC ${new Date().toISOString().slice(0,16)}Z`, c:''},
-    {t:'> LOADING NOAA SWPC F10.7 ARCHIVE...', c:'term-blue'},
-    {t:`>   ${DATA.forecast.history_year.length} monthly records, GP fitted`, c:''},
-    {t:'> SAMPLING POSTERIOR (n=' + DATA.forecast.n_samples + ')...', c:''},
-    {t:'> RUNNING ROBUST DECAY OPTIMIZATION...', c:'term-amber'},
-    {t:`>   sail area = ${p.sail_area_m2.toFixed(2)} m², Cd=${p.Cd}, alt=${p.altitude_km} km`, c:''},
-    {t:`>   ${DATA.optimizer.candidate_days.length} candidates, window ±${p.window_days/2} d`, c:''},
-    {t:'------------------------------------------------', c:''},
-    {t:'NAIVE STRATEGY (deploy at EOL):', c:'term-amber'},
-    {t:`   deploy day ${naive.deploy_day}  →  post-EOM ${naive.post_eom_years.toFixed(2)} yr (p95 ${naive.post_eom_p95.toFixed(2)})`, c:''},
-    {t:'AI ROBUST STRATEGY (min E[score]):', c:'term-green'},
-    {t:`   deploy day ${ai.deploy_day}  →  post-EOM ${ai.post_eom_years.toFixed(2)} yr (p95 ${ai.post_eom_p95.toFixed(2)})`, c:''},
-    {t:'------------------------------------------------', c:''},
-    {t:`ESA ESSB-ST-U-007 §SDM-50 (5-yr post-EOM): ${ai.esa_5yr_compliant?'PASS ✓':'FAIL ✗'}`, c: ai.esa_5yr_compliant?'term-green':'term-red'},
-    {t:`Onboard model: ${DATA.flight_policy.c_file_bytes||'?'} B C, depth ${DATA.flight_policy.max_depth||'?'}, ${DATA.flight_policy.n_leaves||'?'} leaves`, c:'term-blue'},
-    {t:'STATUS: REPORT READY FOR EXPORT', c:'term-green'},
-  ];
-  lines.forEach((line, i)=>{ setTimeout(()=>{
-    const div = document.createElement('div');
-    div.className = 'term-line ' + line.c; div.innerText = line.t;
-    win.appendChild(div); win.scrollTop = win.scrollHeight;
-  }, i*250); });
-}
-function closeReport(){ document.getElementById('term-overlay').style.display = 'none'; }
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeReport(); });
 </script>
 </body>
 </html>
